@@ -1,1 +1,76 @@
 db info
+
+# Создание базы данных
+
+-- Таблица пользователей
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,                     -- ID пользователя (автоинкремент)
+    username VARCHAR(255) NOT NULL,                -- Логин пользователя
+    email VARCHAR(255) NOT NULL UNIQUE,            -- Электронная почта (уникальная)
+    password_hash VARCHAR(255) NOT NULL,           -- Хеш пароля
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    last_login TIMESTAMP                           -- Дата последнего входа
+);
+
+-- Таблица матриц
+CREATE TABLE matrices (
+    matrix_id SERIAL PRIMARY KEY,                  -- ID матрицы
+    user_id INTEGER NOT NULL,                     -- ID владельца (пользователя)
+    matrix_name VARCHAR(255) NOT NULL,            -- Название матрицы
+    rows INTEGER NOT NULL,                        -- Количество строк
+    columns INTEGER NOT NULL,                     -- Количество столбцов
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Дата изменения
+    FOREIGN KEY (user_id) REFERENCES users(user_id) -- Связь с таблицей users
+);
+
+-- Таблица элементов матрицы
+CREATE TABLE matrixElements (
+    element_id SERIAL PRIMARY KEY,                -- ID элемента
+    matrix_id INTEGER NOT NULL,                  -- ID матрицы
+    row_index INTEGER NOT NULL,                  -- Индекс строки
+    column_index INTEGER NOT NULL,               -- Индекс столбца
+    value DOUBLE PRECISION NOT NULL,             -- Значение элемента
+    FOREIGN KEY (matrix_id) REFERENCES matrices(matrix_id), -- Связь с таблицей matrices
+    UNIQUE (matrix_id, row_index, column_index)   -- Уникальность комбинации
+);
+
+-- Таблица операций
+CREATE TABLE operations (
+    operation_id SERIAL PRIMARY KEY,              -- ID операции
+    operation_name VARCHAR(255) NOT NULL UNIQUE, -- Название операции (уникальное)
+    description TEXT,                            -- Описание операции
+    is_binary BOOLEAN NOT NULL                   -- Флаг бинарной операции (true/false)
+);
+
+-- Таблица истории вычислений (с изменениями)
+CREATE TABLE calculationHistory (
+    history_id SERIAL PRIMARY KEY,               -- ID записи истории
+    user_id INTEGER NOT NULL,                   -- ID пользователя
+    operation_id INTEGER NOT NULL,              -- ID операции
+    result_matrix_id INTEGER,                   -- ID результирующей матрицы
+    matrix_a_id INTEGER,                        -- ID матрицы A
+    matrix_b_id INTEGER,                        -- ID матрицы B (может быть NULL)
+    scalar_value DOUBLE PRECISION NULL,         -- Скалярное значение (может быть NULL)
+    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Время операции
+    parameters JSONB,                           -- Дополнительные параметры (в формате JSON)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (operation_id) REFERENCES operations(operation_id),
+    FOREIGN KEY (result_matrix_id) REFERENCES matrices(matrix_id),
+    FOREIGN KEY (matrix_a_id) REFERENCES matrices(matrix_id),
+    FOREIGN KEY (matrix_b_id) REFERENCES matrices(matrix_id)
+);
+
+# Тестовые данные
+
+-- Добавление пользователя
+INSERT INTO users (username, email, password_hash) 
+VALUES ('test_user', 'test@example.com', 'hashed_password_123');
+
+-- Добавление матрицы
+INSERT INTO matrices (user_id, matrix_name, rows, columns) 
+VALUES (1, 'Test Matrix', 3, 3);
+
+-- Добавление элементов матрицы
+INSERT INTO matrixElements (matrix_id, row_index, column_index, value) 
+VALUES (1, 0, 0, 1.5), (1, 0, 1, 2.0), (1, 1, 0, 3.0);

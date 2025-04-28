@@ -49,6 +49,28 @@
 
 ## Установка и запуск
 <!-- Instructions for setting up and running the project -->
+### Установка для разработки
+```bash
+git clone https://github.com/gonpaul/2nd-year-study-project.git
+npm i
+cd frontend
+npm i
+cd ../backend
+npm i
+```
+
+### Запуск сервера Express
+```bash
+cd backend
+npm run start
+# запуск в dev формате = авто обновления
+npm run dev
+```
+### Запуск клиента Electron
+```bash
+cd frontend
+npm run start
+```
 
 ## Основные этапы
 

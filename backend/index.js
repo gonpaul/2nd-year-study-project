@@ -1,6 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+// Import routers
+import userRoutes from './routes/userRoutes.js';
+import calcHistoryRoutes from './routes/calcHistoryRoutes.js';
+
 
 // Initialize express app
 const app = express();
@@ -11,6 +15,10 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
+// Use routers
+app.use('/api/users', userRoutes);
+app.use('/api/calculation-history', calcHistoryRoutes);
+
 // Basic route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the API' });
@@ -20,9 +28,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-// register route
-
-
-

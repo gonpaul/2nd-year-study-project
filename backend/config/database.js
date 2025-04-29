@@ -1,9 +1,16 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Path to the SQLite database file
 const dbPath = path.join(__dirname, '..', 'database.sqlite');
 const db = new Database(dbPath);
+
+const isTest = process.env.NODE_ENV === 'test';
 
 // Create tables if they do not exist
 db.exec(`

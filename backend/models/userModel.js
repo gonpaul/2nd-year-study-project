@@ -40,6 +40,13 @@ const UserModel = {
       changes: result.changes,
       success: result.changes > 0
     };
+  },
+
+  selectAllUsers: () => {
+    const stmt = db.prepare(`
+      SELECT * FROM users
+    `);
+    return stmt.all();
   }
 };
 

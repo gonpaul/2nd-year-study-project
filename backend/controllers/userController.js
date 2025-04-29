@@ -1,22 +1,17 @@
-import UserModel from '../models/user.js';
+import UserModel from '../models/userModel.js';
 
 // Контроллер для регистрации пользователя
 export const registerUser = (username, email, password) => {
 
   // В реальности нужно хешировать пароль
   const password_hash = password; // Для демонстрации
-
   const result = UserModel.register({ username, email, password_hash });
-
   if (result.success) {
-    res.status(201).json({ message: 'User registered', userId: result.id });
-  } else {
-    if (result.error === 'Email already exists') {
-      res.status(400).json({ error: result.error });
-    } else {
-      res.status(500).json({ error: 'Registration failed' });
-    }
+    const users = UserModel.selectAllUsers();
+    console.log(JSON.stringify(users, null, 2));
+    return result.id;
   }
+  return false;
 };
 
 // Контроллер для входа пользователя

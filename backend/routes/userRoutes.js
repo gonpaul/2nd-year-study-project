@@ -11,11 +11,16 @@ router.post('/register', (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-// registerUser(username, email, password);
-  res.status(201).json({
-    message: 'User registered successfully',
-    user: { username, email }
-  });
+  // returns id if success, otherwise false;
+  const response = registerUser(username, email, password);
+  if (response) {
+    res.status(201).json({
+        message: 'User registered successfully',
+        user: { username, email }
+    });
+  } else {
+    res.status(400).json("Registration failed");
+  }
 });
 
 // Login route

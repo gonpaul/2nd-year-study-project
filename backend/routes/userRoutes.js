@@ -1,8 +1,7 @@
 import express from 'express';
-const router = express.Router();
+import { registerUser, loginUser, updatePassword } from '../controllers/userController.js';
 
-// Import your user controller here
-// const userController = require('../controllers/userController');
+const router = express.Router();
 
 // Register route
 router.post('/register', (req, res) => {
@@ -12,7 +11,7 @@ router.post('/register', (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Here you would call userController.registerUser(req, res)
+// registerUser(username, email, password);
   res.status(201).json({
     message: 'User registered successfully',
     user: { username, email }

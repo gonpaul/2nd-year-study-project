@@ -71,6 +71,10 @@ npm run dev
 cd frontend
 npm run start
 ```
+### Команды для запуска теста БД
+```bash
+node backend/test-db.cjs
+```
 
 ## Основные этапы
 

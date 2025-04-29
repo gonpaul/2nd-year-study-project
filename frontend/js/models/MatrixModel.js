@@ -1,4 +1,4 @@
-export class MatrixModel {
+class MatrixModel {
     constructor() {
         this.matrixA = [
             [0, 0, 0],
@@ -438,3 +438,5 @@ export class MatrixModel {
         }
     }
 } 
+
+module.exports = { MatrixModel };

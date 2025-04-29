@@ -1,4 +1,4 @@
-export class MatrixController {
+class MatrixController {
     constructor(model, view) {
         this.model = model;
         this.view = view;
@@ -65,7 +65,7 @@ export class MatrixController {
     }
     
     handleCalculateInverse(matrixName) {
-        this.model.inverseMatrix(matrixName);
+        this.model.calculateInverse(matrixName);
     }
     
     handleSwapMatrices() {
@@ -83,4 +83,6 @@ export class MatrixController {
     handleMultiplyMatrices() {
         this.model.multiplyMatricesAB();
     }
-} 
+}
+
+module.exports = { MatrixController };

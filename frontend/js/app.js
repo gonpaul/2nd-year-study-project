@@ -1,6 +1,6 @@
-import { MatrixController } from "./controllers/MatrixController.js";
-import { MatrixModel } from "./models/MatrixModel.js";
-import { MatrixView } from "./views/MatrixView.js"
+const { MatrixController } = require("./controllers/MatrixController.js");
+const { MatrixModel } = require("./models/MatrixModel.js");
+const { MatrixView } = require("./views/MatrixView.js");
 // Wait for the DOM content to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize the application with MVC components

@@ -1,4 +1,4 @@
-export class MatrixView {
+class MatrixView {
     constructor() {
         // Matrix input elements
         this.matrixAElement = document.getElementById('matrix-a');
@@ -200,3 +200,5 @@ export class MatrixView {
         this.multiplyMatricesButton.addEventListener('click', handler);
     }
 } 
+
+module.exports = { MatrixView };

@@ -1,3 +1,4 @@
+```
 backend/
 ├── config/              # Configuration files
 │   └── db.js            # Database connection
@@ -13,3 +14,13 @@ backend/
 ├── .env                 # Environment variables (gitignored)
 ├── package.json         # Dependencies
 └── index.js             # Entry point
+```
+
+
+## Endpoints
+
+1. register a user
+2. sign a user
+3. crud matrix operation in history
+
+

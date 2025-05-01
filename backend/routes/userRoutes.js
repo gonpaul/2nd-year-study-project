@@ -31,11 +31,15 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  // Here you would call userController.loginUser(req, res)
-  res.json({
-    message: 'Login successful',
-    user: { email }
-  });
+  const response = loginUser(email, password);
+  if (response) {
+    res.status(201).json({
+      message: 'Login successful',
+      user: { email }
+    });
+  } else {
+    res.status(400).json("Login failed")
+  }
 });
 
 // Change password route
@@ -48,11 +52,15 @@ router.post('/change-password', (req, res) => {
     });
   }
 
-  // Here you would call userController.changePassword(req, res)
-  res.json({
-    message: 'Password changed successfully',
-    user: { email }
-  });
+  const response = updatePassword(email, currentPassword, newPassword);
+  if (response) {
+    res.status(201).json({
+      message: 'Password changed successfully',
+      user: { email }
+    });
+  } else {
+    res.status(400).json("Password change failed");
+  }
 });
 
 export default router;

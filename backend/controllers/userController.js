@@ -5,11 +5,11 @@ export const registerUser = (username, email, password) => {
 
   // В реальности нужно хешировать пароль
   const password_hash = password; // Для демонстрации
-  const result = UserModel.register({ username, email, password_hash });
-  if (result) {
+  const insertedRowId = UserModel.register({ username, email, password_hash });
+  if (insertedRowId) {
     const users = UserModel.selectAllUsers();
     console.log(JSON.stringify(users, null, 2));
-    return result.id;
+    return insertedRowId;
   }
   return false;
 };

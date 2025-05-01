@@ -7,6 +7,7 @@ const UserModel = {
         VALUES (?, ?, ?)
       `);
       const result = stmt.run(username, email, password_hash);
+      // EXAMPLE:  { changes: 1, lastInsertRowid: 15 }
       return result.lastInsertRowid;
   },
 
@@ -34,12 +35,20 @@ const UserModel = {
   },
 
   selectAllUsers: () => {
-      const stmt = db.prepare(`
+    const stmt = db.prepare(`
         SELECT * FROM users
       `);
-      const users = stmt.all();
-      return users;
-}
+    const users = stmt.all();
+    return users;
+  },
+
+  getUserByEmail: (email) => {
+    const result = db.prepare(`
+      SELECT * FROM users WHERE email = ?
+    `).get(email)
+    // console.log(result);
+    return result;
+  }
 };
 
 export default UserModel;

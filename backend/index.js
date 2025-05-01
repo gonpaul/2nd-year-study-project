@@ -16,6 +16,7 @@ app.use(cors());
 app.use(morgan('dev'));
 
 // Use routers
+// localhost:8080/api/users 
 app.use('/api/users', userRoutes);
 app.use('/api/calculation-history', calcHistoryRoutes);
 

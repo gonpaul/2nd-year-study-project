@@ -1,8 +1,7 @@
 import express from 'express';
-const router = express.Router();
+import { registerUser, loginUser, updatePassword } from '../controllers/userController.js';
 
-// Import your user controller here
-// const userController = require('../controllers/userController');
+const router = express.Router();
 
 // Register route
 router.post('/register', (req, res) => {
@@ -12,11 +11,16 @@ router.post('/register', (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Here you would call userController.registerUser(req, res)
-  res.status(201).json({
-    message: 'User registered successfully',
-    user: { username, email }
-  });
+  // returns id if success, otherwise false;
+  const response = registerUser(username, email, password);
+  if (response) {
+    res.status(201).json({
+        message: 'User registered successfully',
+        user: { username, email }
+    });
+  } else {
+    res.status(400).json("Registration failed");
+  }
 });
 
 // Login route
@@ -27,11 +31,15 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  // Here you would call userController.loginUser(req, res)
-  res.json({
-    message: 'Login successful',
-    user: { email }
-  });
+  const response = loginUser(email, password);
+  if (response) {
+    res.status(201).json({
+      message: 'Login successful',
+      user: { email }
+    });
+  } else {
+    res.status(400).json("Login failed")
+  }
 });
 
 // Change password route
@@ -44,11 +52,15 @@ router.post('/change-password', (req, res) => {
     });
   }
 
-  // Here you would call userController.changePassword(req, res)
-  res.json({
-    message: 'Password changed successfully',
-    user: { email }
-  });
+  const response = updatePassword(email, currentPassword, newPassword);
+  if (response) {
+    res.status(201).json({
+      message: 'Password changed successfully',
+      user: { email }
+    });
+  } else {
+    res.status(400).json("Password change failed");
+  }
 });
 
 export default router;

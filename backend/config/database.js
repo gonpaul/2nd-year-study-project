@@ -26,7 +26,6 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS matrices (
     matrix_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    matrix_name TEXT NOT NULL,
     rows INTEGER NOT NULL,
     columns INTEGER NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -1,65 +1,53 @@
 import express from 'express';
-import { registerUser, loginUser, updatePassword } from '../controllers/userController.js';
+import { registerUser, loginUser, changePassword } from '../controllers/userController.js';
 
 const router = express.Router();
 
-// Register route
-router.post('/register', (req, res) => {
+// Регистрация
+router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // returns id if success, otherwise false;
-  const response = registerUser(username, email, password);
-  if (response) {
-    res.status(201).json({
-        message: 'User registered successfully',
-        user: { username, email }
-    });
+  const result = await registerUser(username, email, password);
+  if (result) {
+    res.status(201).json({ message: 'User successfully registered' });
   } else {
-    res.status(400).json("Registration failed");
+    res.status(400).json({ error: 'A user with this email already exists or an error has occurred' });
   }
 });
 
-// Login route
-router.post('/login', (req, res) => {
+// Вход
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  const response = loginUser(email, password);
-  if (response) {
-    res.status(201).json({
-      message: 'Login successful',
-      user: { email }
-    });
+  const user = await loginUser(email, password);
+  if (user) {
+    res.json({ message: 'Successful entry', user });
   } else {
-    res.status(400).json("Login failed")
+    res.status(401).json({ error: 'Invalid email or password' });
   }
 });
 
-// Change password route
-router.post('/change-password', (req, res) => {
+// Смена пароля
+router.post('/change-password', async (req, res) => {
   const { email, currentPassword, newPassword } = req.body;
 
   if (!email || !currentPassword || !newPassword) {
-    return res.status(400).json({
-      error: 'Email, current password, and new password are required'
-    });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const response = updatePassword(email, currentPassword, newPassword);
-  if (response) {
-    res.status(201).json({
-      message: 'Password changed successfully',
-      user: { email }
-    });
+  const result = await changePassword(email, currentPassword, newPassword);
+  if (result.success) {
+    res.json({ message: result.message });
   } else {
-    res.status(400).json("Password change failed");
+    res.status(400).json({ error: result.message });
   }
 });
 

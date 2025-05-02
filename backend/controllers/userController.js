@@ -18,22 +18,35 @@ export const registerUser = async (username, email, password) => {
 
 // Вход пользователя с хешированием
 export const loginUser = async (email, password) => {
-  const user = await UserModel.login(email);
-  if (user) {
-    const match = await bcrypt.compare(password, user.password_hash);
-    if (match) {
-      return { user_id: user.user_id, username: user.username, password_hash: user.password_hash };
-    }
+  const user = UserModel.login({ email });
+  if (!user) {
+    return false; // Пользователь не найден
   }
-  return false;
+
+  const match = await bcrypt.compare(password, user.password_hash);
+  if (match) {
+    // Можно возвращать user_id или JWT токен
+    return { user_id: user.user_id, username: user.username };
+  }
+  return false; // Неверный пароль
 };
 
 // Обновление пароля с хешированием
-export const updatePassword = async (user_id, new_password) => {
-  const new_password_hash = await bcrypt.hash(new_password, SALT_ROUNDS);
-  const result = await UserModel.updatePassword(user_id, new_password_hash);
-  if (result) {
-    return 'Password updated';
+export const changePassword = async (email, currentPassword, newPassword) => {
+  const user = UserModel.login({ email });
+  if (!user) {
+    return { success: false, message: 'User not found' };
   }
-  return false;
+
+  const match = await bcrypt.compare(currentPassword, user.password_hash);
+  if (!match) {
+    return { success: false, message: 'Invalid current password' };
+  }
+
+  const result = await UserModel.updatePassword({ user_id: user.user_id, new_password_hash: await bcrypt.hash(newPassword, 10) });
+  if (result.success) {
+    return { success: true, message: 'Password successfully updated' };
+  } else {
+    return { success: false, message: 'Failed to update password' };
+  }
 };

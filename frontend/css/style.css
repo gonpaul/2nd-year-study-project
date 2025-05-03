@@ -169,4 +169,15 @@ h2 {
         order: 3;
         margin-top: 20px;
     }
-} 
+}
+
+.error-message {
+    color: red;
+    padding: 10px;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffeeee;
+    border: 1px solid red;
+}

@@ -1,88 +1,63 @@
+const MatrixModel = require('../models/MatrixModel');
+const MatrixView = require('../views/MatrixView');
+
 class MatrixController {
-    constructor(model, view) {
-        this.model = model;
-        this.view = view;
-        
-        // Binding model events
-        this.model.bindMatrixChanged(this.onMatrixChanged.bind(this));
-        this.model.bindHistoryChanged(this.onHistoryChanged.bind(this));
-        
-        // Binding view events
-        this.view.bindMatrixInputChanged(this.handleMatrixInputChanged.bind(this));
-        this.view.bindClearMatrix(this.handleClearMatrix.bind(this));
-        this.view.bindTransposeMatrix(this.handleTransposeMatrix.bind(this));
-        this.view.bindMultiplyByScalar(this.handleMultiplyByScalar.bind(this));
-        this.view.bindCalculateDeterminant(this.handleCalculateDeterminant.bind(this));
-        this.view.bindRaiseToPower(this.handleRaiseToPower.bind(this));
-        this.view.bindCalculateRank(this.handleCalculateRank.bind(this));
-        this.view.bindCalculateInverse(this.handleCalculateInverse.bind(this));
-        this.view.bindSwapMatrices(this.handleSwapMatrices.bind(this));
-        this.view.bindAddMatrices(this.handleAddMatrices.bind(this));
-        this.view.bindSubtractMatrices(this.handleSubtractMatrices.bind(this));
-        this.view.bindMultiplyMatrices(this.handleMultiplyMatrices.bind(this));
-        
-        // Initialize view
-        this.view.initializeMatrixInputs();
-        this.view.displayMatrices(this.model.matrixA, this.model.matrixB);
+    constructor() {
+        this.model = new MatrixModel();
+        this.view = new MatrixView();
+        this.bindEvents();
+        this.initializeMatrices();
     }
-    
-    // Model event handlers
-    onMatrixChanged(matrixA, matrixB) {
-        this.view.displayMatrices(matrixA, matrixB);
+
+    initializeMatrices() {
+        this.view.updateMatrixDisplay('A', 3, this.model.matrixA);
+        this.view.updateMatrixDisplay('B', 3, this.model.matrixB);
     }
-    
-    onHistoryChanged(history) {
-        this.view.displayHistory(history);
+
+    bindEvents() {
+        // Размер матриц
+        document.getElementById('resize-matrices').addEventListener('change', (e) => {
+            this.handleResize(e.target.value);
+        });
+
+        // Обновление данных при вводе
+        [this.view.matrixAContainer, this.view.matrixBContainer].forEach(container => {
+            container.addEventListener('input', (e) => {
+                if (e.target.classList.contains('matrix-cell')) {
+                    this.handleMatrixInput(
+                        container.id.split('-')[1],
+                        e.target.dataset.row,
+                        e.target.dataset.col,
+                        e.target.value
+                    );
+                }
+            });
+        });
     }
-    
-    // View event handlers
-    handleMatrixInputChanged(matrixName, row, col, value) {
-        this.model.updateMatrix(matrixName, row, col, value);
+
+    handleResize(sizeString) {
+        if (!sizeString) return;
+
+        try {
+            const newSize = parseInt(sizeString.split('x')[0]);
+            this.model.resizeMatrix(newSize);
+
+            this.view.updateMatrixDisplay('A', newSize, this.model.matrixA);
+            this.view.updateMatrixDisplay('B', newSize, this.model.matrixB);
+
+        } catch (error) {
+            this.view.showError(error.message);
+        }
     }
-    
-    handleClearMatrix(matrixName) {
-        this.model.clearMatrix(matrixName);
+
+    handleMatrixInput(matrixId, row, col, value) {
+        const matrix = matrixId === 'A'
+            ? this.model.matrixA
+            : this.model.matrixB;
+
+        matrix[row][col] = parseFloat(value) || 0;
     }
-    
-    handleTransposeMatrix(matrixName) {
-        this.model.transpose(matrixName);
-    }
-    
-    handleMultiplyByScalar(matrixName, scalar) {
-        this.model.multiplyByScalar(matrixName, scalar);
-    }
-    
-    handleCalculateDeterminant(matrixName) {
-        this.model.calculateDeterminant(matrixName);
-    }
-    
-    handleRaiseToPower(matrixName, power) {
-        this.model.raiseTopower(matrixName, power);
-    }
-    
-    handleCalculateRank(matrixName) {
-        this.model.calculateRank(matrixName);
-    }
-    
-    handleCalculateInverse(matrixName) {
-        this.model.calculateInverse(matrixName);
-    }
-    
-    handleSwapMatrices() {
-        this.model.swapMatrices();
-    }
-    
-    handleAddMatrices() {
-        this.model.addMatrices();
-    }
-    
-    handleSubtractMatrices() {
-        this.model.subtractMatrices();
-    }
-    
-    handleMultiplyMatrices() {
-        this.model.multiplyMatricesAB();
-    }
+
 }
 
-module.exports = { MatrixController };
+module.exports = MatrixController;

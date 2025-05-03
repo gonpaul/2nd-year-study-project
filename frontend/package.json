@@ -12,11 +12,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "electron": "^36.0.0"
-  },
   "devDependencies": {
     "eslint": "^9.25.1",
-    "globals": "^16.0.0"
+    "globals": "^16.0.0",
+    "electron": "^36.0.0"
   }
 }

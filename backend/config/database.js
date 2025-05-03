@@ -59,7 +59,6 @@ db.exec(`
     matrix_b_id INTEGER,
     scalar_value REAL,
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    parameters TEXT,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (operation_id) REFERENCES operations(operation_id),
     FOREIGN KEY (result_matrix_id) REFERENCES matrices(matrix_id),

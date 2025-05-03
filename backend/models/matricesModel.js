@@ -15,7 +15,7 @@ const MatricesModel = {
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < columns; c++) {
-                    MatrixElementsModel.addElement(matrixId, r, c, matrix[r][c])
+                    MatrixElementsModel.addElement({ matrix_id: matrixId, row_index: r, column_index: c, value: matrix[r][c] }); // addElement принимает переменныеmatrix_id, row_index, column_index, value которые не были объявлены раньше
                 }
             } 
             return matrixId;

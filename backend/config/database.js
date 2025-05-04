@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import updateOperations from './operations';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -66,5 +67,7 @@ db.exec(`
     FOREIGN KEY (matrix_b_id) REFERENCES matrices(matrix_id)
   );
 `);
+
+updateOperations();
 
 export default db;

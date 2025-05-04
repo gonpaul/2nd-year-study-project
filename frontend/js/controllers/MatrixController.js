@@ -33,6 +33,10 @@ class MatrixController {
                 }
             });
         });
+
+        document.getElementById('add-matrices').addEventListener('click', () => {
+            this.handleAddition();
+        });
     }
 
     handleResize(sizeString) {
@@ -51,11 +55,16 @@ class MatrixController {
     }
 
     handleMatrixInput(matrixId, row, col, value) {
-        const matrix = matrixId === 'A'
+        const matrix = matrixId === 'a'
             ? this.model.matrixA
             : this.model.matrixB;
 
         matrix[row][col] = parseFloat(value) || 0;
+    }
+
+    handleAddition() {
+        const result = this.model.add(this.model.matrixA, this.model.matrixB);
+        console.log(result);
     }
 
 }

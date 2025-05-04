@@ -26,6 +26,11 @@ class MatrixModel {
             )
         );
     }
+    add(matrixA, matrixB) {
+        return matrixA.map((row, i) => 
+            row.map((val, j) => val + matrixB[i][j])
+        );
+    }
 }
 
 module.exports = MatrixModel;

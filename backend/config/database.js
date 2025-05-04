@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import updateOperations from './operations';
+import operations from './operations.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -67,6 +67,45 @@ db.exec(`
     FOREIGN KEY (matrix_b_id) REFERENCES matrices(matrix_id)
   );
 `);
+
+// Функция для добавления новых операций, которых еще нет в таблице
+function updateOperations() {
+  // Проверяем, сколько записей уже есть
+  const existingCount = db.prepare('SELECT COUNT(*) as cnt FROM operations').get().cnt;
+
+  // Создаем таблицу, если еще не существует
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS operations (
+      operation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      operation_name TEXT NOT NULL UNIQUE,
+      description TEXT,
+      is_binary INTEGER NOT NULL
+    )
+  `).run();
+
+  // Если таблица пуста, добавляем все операции
+  if (existingCount === 0) {
+    for (const type in operations) {
+      for (const op of operations[type]) {
+        const isBinary = (type === 'binary') ? 1 : 0;
+        db.prepare(`INSERT OR IGNORE INTO operations (operation_name, description, is_binary) VALUES (?, ?, ?)`)
+          .run(op.name, op.description, isBinary);
+      }
+    }
+    console.log('Operations table has been filled with initial data.');
+  } else {
+    // Таблица уже содержит записи, добавляем только отсутствующие
+    for (const type in operations) {
+      for (const op of operations[type]) {
+        const isBinary = (type === 'binary') ? 1 : 0;
+        // Вставляем только если операции еще нет (по operation_name)
+        db.prepare(`INSERT OR IGNORE INTO operations (operation_name, description, is_binary) VALUES (?, ?, ?)`)
+          .run(op.name, op.description, isBinary);
+      }
+    }
+    console.log('Operations table has been updated with missing entries.');
+  }
+}
 
 updateOperations();
 

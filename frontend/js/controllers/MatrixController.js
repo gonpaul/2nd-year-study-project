@@ -15,6 +15,15 @@ class MatrixController {
     }
 
     bindEvents() {
+        // Очистка матриц
+        document.getElementById('clear-a').addEventListener('click', () => {
+            this.handleClear('A');
+        });
+
+        document.getElementById('clear-b').addEventListener('click', () => {
+            this.handleClear('B');
+        });
+
         // Размер матриц
         document.getElementById('resize-matrices').addEventListener('change', (e) => {
             this.handleResize(e.target.value);
@@ -34,8 +43,24 @@ class MatrixController {
             });
         });
 
+        // Сложение матриц 
         document.getElementById('add-matrices').addEventListener('click', () => {
             this.handleAddition();
+        });
+
+        // Вычитание матриц
+        document.getElementById('subtract-matrices').addEventListener('click', () => {
+            this.handleSubtraction();
+        });
+
+        // Умножение матриц
+        document.getElementById('multiply-matrices').addEventListener('click', () => {
+            this.handleMultiplication();
+        });
+
+        // Обмен матрицами
+        document.getElementById('swap-matrices').addEventListener('click', () => {
+            this.handleSwap();
         });
     }
 
@@ -65,6 +90,31 @@ class MatrixController {
     handleAddition() {
         const result = this.model.add(this.model.matrixA, this.model.matrixB);
         console.log(result);
+    }
+
+    handleSubtraction() {
+        const result = this.model.subtract(this.model.matrixA, this.model.matrixB);
+        console.log(result);
+    }
+
+    handleMultiplication() {
+        const result = this.model.multiply(this.model.matrixA, this.model.matrixB);
+        console.log(result);
+    }
+
+    handleSwap() {
+        this.model.swapMatrices();
+        this.view.updateMatrixDisplay('A', this.model.currentSize, this.model.matrixA);
+        this.view.updateMatrixDisplay('B', this.model.currentSize, this.model.matrixB);
+    }
+
+    handleClear(matrixId) {
+        this.model.clearMatrix(matrixId);
+        this.view.updateMatrixDisplay(
+            matrixId.toUpperCase(),
+            this.model.currentSize,
+            matrixId === 'A' ? this.model.matrixA : this.model.matrixB
+        );
     }
 
 }

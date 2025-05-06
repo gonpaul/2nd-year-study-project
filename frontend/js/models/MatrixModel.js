@@ -1,8 +1,24 @@
 class MatrixModel {
-    constructor() {
-        this.currentSize = 3;
-        this.matrixA = this.createEmptyMatrix(3);
-        this.matrixB = this.createEmptyMatrix(3);
+    constructor(size = 3) {
+        this.currentSize = size;
+        this.matrixA = this.createEmptyMatrix(size);
+        this.matrixB = this.createEmptyMatrix(size);
+    }
+
+    setMatrixA(matrix) {
+        this.matrixA = matrix;
+    }
+
+    setMatrixB(matrix) {
+        this.matrixB = matrix;
+    }
+
+    getMatrixA() {
+        return this.matrixA;
+    }
+
+    getMatrixB() {
+        return this.matrixB;
     }
 
     createEmptyMatrix(size) {

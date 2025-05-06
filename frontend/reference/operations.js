@@ -19,7 +19,7 @@ const operations = [
     { id: 5, name: 'calculateRank', isBinary: false },
     { id: 6, name: 'calculateInverse', isBinary: false },
     { id: 7, name: 'add', isBinary: true },
-    { id: 8, name: 'substract', isBinary: true },
+    { id: 8, name: 'subtract', isBinary: true },
     { id: 9, name: 'multiply', isBinary: true }
 ];
 
@@ -34,7 +34,7 @@ const OperationsTable = {
     },
     binary: {
         add: 7,
-        substract: 8,
+        subtract: 8,
         multiply: 9
     },
 }

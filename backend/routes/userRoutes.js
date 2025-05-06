@@ -11,9 +11,9 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const result = await registerUser(username, email, password);
-  if (result) {
-    res.status(201).json({ message: 'User successfully registered' });
+  const insertedRowId = await registerUser(username, email, password);
+  if (insertedRowId) {
+    res.status(201).json({ message: 'User successfully registered', userId: insertedRowId });
   } else {
     res.status(400).json({ error: 'A user with this email already exists or an error has occurred' });
   }
@@ -29,6 +29,7 @@ router.post('/login', async (req, res) => {
 
   const user = await loginUser(email, password);
   if (user) {
+    // user is a dict where {userId: Number, username: string}
     res.json({ message: 'Successful entry', user });
   } else {
     res.status(401).json({ error: 'Invalid email or password' });

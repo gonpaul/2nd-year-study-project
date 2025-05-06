@@ -9,8 +9,9 @@ export const registerUser = async (username, email, password) => {
   const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
   const insertedRowId = await UserModel.register({ username, email, password_hash });
   if (insertedRowId) {
-    const users = await UserModel.selectAllUsers();
-    console.log(JSON.stringify(users, null, 2));
+    const allUsers = UserModel.selectAllUsers();
+    const lastThreeUsers = allUsers.slice(-3);
+    console.log(JSON.stringify(lastThreeUsers, null, 2));
     return insertedRowId;
   }
   return false;

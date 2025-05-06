@@ -2,23 +2,22 @@
 
 // Объект с операциями
 const operations = {
-    unary: [
-      { name: 'Clear', description: 'Clear the matrix' },
-      { name: 'Transpose', description: 'Transpose the matrix' },
-      { name: 'Find Rank', description: 'Find the rank of the matrix' },
-      { name: 'Find Determinant', description: 'Calculate the determinant' },
-      { name: 'Invert', description: 'Invert the matrix' },
-      { name: 'Triangular Form', description: 'Transform to triangular form' },
-      { name: 'Diagonal Form', description: 'Transform to diagonal form' },
-      { name: 'Raise to Power', description: 'Raise the matrix to a power' }
-    ],
-    binary: [
-      { name: 'Multiply', description: 'Multiply two matrices' },
-      { name: 'Add', description: 'Add two matrices' },
-      { name: 'Subtract', description: 'Subtract two matrices' },
-      // { name: 'Add Another Matrix', description: 'Add a third matrix (optional)' }
-    ]
-  };
+  unary: [
+    { name: 'Transpose', description: 'Transpose the matrix' },
+    { name: 'Multiply by scalar', description: 'Multiply the matrix by scalar' },
+    { name: 'Calculate Determinant', description: 'Calculate the determinant' },
+    { name: 'Raise to Power', description: 'Raise the matrix to a power' },
+    { name: 'Calculate Rank', description: 'Find the rank of the matrix' },
+    { name: 'Calculate Inverse', description: 'Invert the matrix' },
+    // { name: 'Triangular Form', description: 'Transform to triangular form' },
+    // { name: 'Diagonal Form', description: 'Transform to diagonal form' },
+  ],
+  binary: [
+    { name: 'Add', description: 'Add two matrices' },
+    { name: 'Subtract', description: 'Subtract two matrices' },
+    { name: 'Multiply', description: 'Multiply two matrices' },
+  ]
+};
   
 
 // Вызов функции при запуске

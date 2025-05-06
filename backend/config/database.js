@@ -70,6 +70,9 @@ db.exec(`
 
 // Функция для добавления новых операций, которых еще нет в таблице
 function updateOperations() {
+  // NOTE: Uncomment to rewrite data
+  // db.prepare('DELETE FROM operations').run();
+  // db.prepare("DELETE FROM sqlite_sequence WHERE name='operations'").run();
   // Проверяем, сколько записей уже есть
   const existingCount = db.prepare('SELECT COUNT(*) as cnt FROM operations').get().cnt;
 
@@ -104,7 +107,11 @@ function updateOperations() {
       }
     }
     console.log('Operations table has been updated with missing entries.');
+  // Log all operations in the table after update
   }
+  const allOperations = db.prepare('SELECT * FROM operations').all();
+  console.log('Current operations in database:');
+  console.table(allOperations);
 }
 
 updateOperations();

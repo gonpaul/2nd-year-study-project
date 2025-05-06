@@ -181,3 +181,44 @@ h2 {
     background: #ffeeee;
     border: 1px solid red;
 }
+
+.history-section {
+    background-color: #a6c1db;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+#history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-entry-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 5px;
+}
+
+.history-matrix {
+    font-family: monospace;
+    white-space: pre;
+    background: rgba(0,0,0,0.1);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.history-operator {
+    font-weight: bold;
+    padding: 0 8px;
+    color: #fff;
+}
+
+.history-equals {
+    margin: 0 10px;
+    color: #fff;
+}

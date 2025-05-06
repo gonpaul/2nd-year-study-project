@@ -75,5 +75,91 @@ class MatrixModel {
             this.matrixB = this.createEmptyMatrix(this.currentSize);
         }
     }
+
+    transpose(matrix) {
+        return matrix[0].map((_, col) =>
+            matrix.map(row => row[col])
+        );
+    }
+
+    scalarMultiply(matrix, scalar) {
+        return matrix.map(row =>
+            row.map(val => val * scalar)
+        );
+    }
+
+    determinant(matrix) {
+        const size = matrix.length;
+
+        if (size === 2) {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        }
+
+        if (size === 3) {
+            return (
+                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
+                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
+                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
+            );
+        }
+    }
+
+
+    // Две функции ниже нужны для invers
+    // Алгебраические дополнения
+    cofactor(matrix) {
+        return matrix.map((row, i) =>
+            row.map((_, j) =>
+                ((-1) ** (i + j)) * this.minor(matrix, i, j)
+            ));
+    }
+
+    // Минор элемента
+    minor(matrix, row, col) {
+        return this.determinant(
+            matrix.filter((_, i) => i !== row)
+                .map(r => r.filter((_, j) => j !== col))
+        );
+    }
+
+    inverse(matrix) {
+        const det = this.determinant(matrix);
+        if (det === 0) throw new Error('Matrix is singular');
+
+        const size = matrix.length;
+        const adjugate = this.transpose(this.cofactor(matrix));
+
+        return this.scalarMultiply(adjugate, 1 / det);
+    }
+
+    rank(matrix) {
+        let rank = 0;
+        const m = matrix.map(row => [...row]);
+
+        for (let col = 0; col < m[0].length; col++) {
+            let pivot = -1;
+            for (let row = rank; row < m.length; row++) {
+                if (Math.abs(m[row][col]) > 1e-10) {
+                    pivot = row;
+                    break;
+                }
+            }
+
+            if (pivot === -1) continue;
+
+            [m[rank], m[pivot]] = [m[pivot], m[rank]];
+
+            for (let row = 0; row < m.length; row++) {
+                if (row !== rank && Math.abs(m[row][col]) > 1e-10) {
+                    const factor = m[row][col] / m[rank][col];
+                    for (let c = col; c < m[0].length; c++) {
+                        m[row][c] -= factor * m[rank][c];
+                    }
+                }
+            }
+            rank++;
+        }
+        return rank;
+    }
 }
 module.exports = MatrixModel;

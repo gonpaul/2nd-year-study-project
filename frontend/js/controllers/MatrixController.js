@@ -37,6 +37,11 @@ class MatrixController {
             this.handleResize(e.target.value);
         });
 
+        // document.querySelectorAll('input[type="number"]').forEach(input => {
+        //     input.onfocus = this.handleFocus(input);
+        //     input.onblur = this.handleBlur;
+        // });
+
         // Обновление данных при вводе
         [this.view.matrixAContainer, this.view.matrixBContainer].forEach(container => {
             container.addEventListener('input', (e) => {
@@ -117,12 +122,12 @@ class MatrixController {
             this.view.showError(error.message);
         }
     }
-
+    
     handleMatrixInput(matrixId, row, col, value) {
         const matrix = matrixId === 'a'
             ? this.model.matrixA
             : this.model.matrixB;
-        matrix[row][col] = parseFloat(value) || 0;
+        matrix[row][col] = value === '' ? 0 : parseFloat(value);
     }
 
     handleAddition() {

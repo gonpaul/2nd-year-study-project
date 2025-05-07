@@ -15,13 +15,19 @@ class MatrixView {
     generateMatrixHTML(size, data) {
         return Array.from({ length: size }, (_, row) => `
             <div class="matrix-row">
-                ${Array.from({ length: size }, (_, col) => `
-                    <input type="number" 
-                           class="matrix-cell" 
-                           value="${data[row][col] || 0}"
-                           data-row="${row}"
-                           data-col="${col}">
-                `).join('')}
+                ${Array.from({ length: size }, (_, col) => {
+            const value = data[row][col];
+            return `
+                        <input type="number" 
+                               class="matrix-cell"
+                               ${value !== 0 ? `value="${value}"` : ''}
+                               placeholder="0"
+                               onfocus = "this.placeholder = ''"
+                               onblur="this.placeholder='0'"
+                               data-row="${row}"
+                               data-col="${col}">
+                    `;
+        }).join('')}
             </div>
         `).join('');
     }
@@ -98,18 +104,12 @@ class MatrixView {
         }
     }
 
-_matrixToString(matrix) {
-    if (!matrix || matrix.length === 0) return '';
-    if (matrix[0].length === 1) return matrix[0][0].toFixed(2);
-    
-    return `
-        <div class="history-matrix">
-            ${matrix.map(row => `
-                [ ${row.map(num => Number(num.toFixed(2))).join('  ')} ]
-            `).join('<br>')}
-        </div>
-    `;
-}
+    _matrixToString(matrix) {
+        if (!matrix || matrix.length === 0) return '';
+        if (matrix[0].length === 1) return matrix[0][0].toFixed(2);
+
+        return `<div class="history-matrix">${matrix.map(row => `[ ${row.map(num => Number(num.toFixed(2))).join('  ')} ]`).join('<br>')}</div>`;
+    }
 }
 
 module.exports = MatrixView;

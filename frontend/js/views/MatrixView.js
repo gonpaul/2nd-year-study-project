@@ -12,6 +12,13 @@ class MatrixView {
         container.innerHTML = this.generateMatrixHTML(size, data);
     }
 
+    updateHistory(historyData) {
+        const historyContainer = document.getElementById('history-container');
+        historyContainer.innerHTML = historyData
+            .map(entry => this._formatHistoryEntry(entry))
+            .join('');
+    }
+
     generateMatrixHTML(size, data) {
         return Array.from({ length: size }, (_, row) => `
             <div class="matrix-row">
@@ -48,7 +55,8 @@ class MatrixView {
         historyContainer.prepend(entryElement);
     }
 
-    _formatHistoryEntry({ operation, matrices, result }) {
+    _formatHistoryEntry(entry) {
+        const { operation, matrices, result } = entry;
         const operators = {
             add: '+',
             subtract: '-',

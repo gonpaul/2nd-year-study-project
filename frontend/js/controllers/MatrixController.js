@@ -1,25 +1,35 @@
 const MatrixModel = require('../models/MatrixModel');
 const MatrixView = require('../views/MatrixView');
+const HistoryModel = require('../models/HistoryModel');
 
 class MatrixController {
     constructor() {
-        this.model = new MatrixModel();
+        this.matrixModel = new MatrixModel();
         this.view = new MatrixView();
+        this.historyModel = new HistoryModel();
         this.bindEvents();
         this.initializeMatrices();
     }
 
     initializeMatrices() {
-        this.view.updateMatrixDisplay('A', 3, this.model.matrixA);
-        this.view.updateMatrixDisplay('B', 3, this.model.matrixB);
+        this.view.updateMatrixDisplay('A', 3, this.matrixModel.matrixA);
+        this.view.updateMatrixDisplay('B', 3, this.matrixModel.matrixB);
     }
 
     _addHistory(operationType, matrices, result) {
-        this.view.displayHistoryEntry({
+        const clonedMatrices = matrices.map(m =>
+            JSON.parse(JSON.stringify(m))
+        );
+        const clonedResult = JSON.parse(JSON.stringify(result));
+
+        this.historyModel.addEntry({
             operation: operationType,
-            matrices: matrices,
-            result: result
+            matrices: clonedMatrices,
+            result: clonedResult,
+            timestamp: new Date().toISOString()
         });
+
+        this.view.updateHistory(this.historyModel.getHistory());
     }
 
     bindEvents() {
@@ -115,25 +125,26 @@ class MatrixController {
 
         try {
             const newSize = parseInt(sizeString.split('x')[0]);
-            this.model.resizeMatrix(newSize);
-            this.view.updateMatrixDisplay('A', newSize, this.model.matrixA);
-            this.view.updateMatrixDisplay('B', newSize, this.model.matrixB);
+            this.matrixModel.resizeMatrix(newSize);
+            this.view.updateMatrixDisplay('A', newSize, this.matrixModel.matrixA);
+            this.view.updateMatrixDisplay('B', newSize, this.matrixModel.matrixB);
         } catch (error) {
             this.view.showError(error.message);
         }
     }
-    
+
     handleMatrixInput(matrixId, row, col, value) {
         const matrix = matrixId === 'a'
-            ? this.model.matrixA
-            : this.model.matrixB;
+            ? this.matrixModel.matrixA
+            : this.matrixModel.matrixB;
         matrix[row][col] = value === '' ? 0 : parseFloat(value);
     }
-
     handleAddition() {
         try {
-            const result = this.model.add(this.model.matrixA, this.model.matrixB);
-            this._addHistory('add', [this.model.matrixA, this.model.matrixB], result);
+            const matrixA = this.matrixModel.getMatrixACopy();
+            const matrixB = this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.add(matrixA, matrixB);
+            this._addHistory('add', [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -141,8 +152,10 @@ class MatrixController {
 
     handleSubtraction() {
         try {
-            const result = this.model.subtract(this.model.matrixA, this.model.matrixB);
-            this._addHistory('subtract', [this.model.matrixA, this.model.matrixB], result);
+            const matrixA = this.matrixModel.getMatrixACopy();
+            const matrixB = this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.subtract(matrixA, matrixB);
+            this._addHistory('subtract', [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -150,8 +163,10 @@ class MatrixController {
 
     handleMultiplication() {
         try {
-            const result = this.model.multiply(this.model.matrixA, this.model.matrixB);
-            this._addHistory('multiply', [this.model.matrixA, this.model.matrixB], result);
+            const matrixA = this.matrixModel.getMatrixACopy();
+            const matrixB = this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.multiply(matrixA, matrixB);
+            this._addHistory('multiply', [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -159,19 +174,12 @@ class MatrixController {
 
     handleSwap() {
         try {
-            this.model.swapMatrices();
-            this.view.updateMatrixDisplay('A', this.model.currentSize, this.model.matrixA);
-            this.view.updateMatrixDisplay('B', this.model.currentSize, this.model.matrixB);
-        } catch (error) {
-            this.view.showError(error.message);
-        }
-    }
-
-    handleClear(matrixId) {
-        try {
-            this.model.clearMatrix(matrixId);
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            this.view.updateMatrixDisplay(matrixId, this.model.currentSize, matrix);
+            const originalA = this.matrixModel.getMatrixACopy();
+            const originalB = this.matrixModel.getMatrixBCopy();
+            this.matrixModel.swapMatrices();
+            this.view.updateMatrixDisplay('A', this.matrixModel.currentSize, this.matrixModel.matrixA);
+            this.view.updateMatrixDisplay('B', this.matrixModel.currentSize, this.matrixModel.matrixB);
+            this._addHistory('swap', [originalA, originalB], [this.matrixModel.getMatrixACopy(), this.matrixModel.getMatrixBCopy()]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -179,10 +187,12 @@ class MatrixController {
 
     handleTranspose(matrixId) {
         try {
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            const result = this.model.transpose(matrix);
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.transpose(original);
             this._updateMatrix(matrixId, result);
-            this._addHistory('transpose', [matrix], result);
+            this._addHistory('transpose', [original], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -190,10 +200,12 @@ class MatrixController {
 
     handleScalarMultiply(matrixId, scalar) {
         try {
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            const result = this.model.scalarMultiply(matrix, scalar);
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.scalarMultiply(original, scalar);
             this._updateMatrix(matrixId, result);
-            this._addHistory('scalar', [matrix, [[scalar]]], result);
+            this._addHistory('scalar', [original, [[scalar]]], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -201,9 +213,11 @@ class MatrixController {
 
     handleDeterminant(matrixId) {
         try {
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            const result = this.model.determinant(matrix);
-            this._addHistory('determinant', [matrix], [[result]]);
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.determinant(original);
+            this._addHistory('determinant', [original], [[result]]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -211,10 +225,12 @@ class MatrixController {
 
     handleInverse(matrixId) {
         try {
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            const result = this.model.inverse(matrix);
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.inverse(original);
             this._updateMatrix(matrixId, result);
-            this._addHistory('inverse', [matrix], result);
+            this._addHistory('inverse', [original], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -222,9 +238,11 @@ class MatrixController {
 
     handleRank(matrixId) {
         try {
-            const matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            const result = this.model.rank(matrix);
-            this._addHistory('rank', [matrix], [[result]]);
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            const result = this.matrixModel.rank(original);
+            this._addHistory('rank', [original], [[result]]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -232,13 +250,25 @@ class MatrixController {
 
     handlePower(matrixId, power) {
         try {
-            let matrix = matrixId === 'A' ? this.model.matrixA : this.model.matrixB;
-            let result = matrix;
+            const original = matrixId === 'A'
+                ? this.matrixModel.getMatrixACopy()
+                : this.matrixModel.getMatrixBCopy();
+            let result = original;
             for (let i = 1; i < power; i++) {
-                result = this.model.multiply(result, matrix);
+                result = this.matrixModel.multiply(result, original);
             }
             this._updateMatrix(matrixId, result);
-            this._addHistory('power', [matrix, [[power]]], result);
+            this._addHistory('power', [original, [[power]]], result);
+        } catch (error) {
+            this.view.showError(error.message);
+        }
+    }
+
+    handleClear(matrixId) {
+        try {
+            this.matrixModel.clearMatrix(matrixId);
+            const matrix = matrixId === 'A' ? this.matrixModel.matrixA : this.matrixModel.matrixB;
+            this.view.updateMatrixDisplay(matrixId, this.matrixModel.currentSize, matrix);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -246,11 +276,11 @@ class MatrixController {
 
     _updateMatrix(matrixId, result) {
         if (matrixId === 'A') {
-            this.model.matrixA = result;
-            this.view.updateMatrixDisplay('A', this.model.currentSize, result);
+            this.matrixModel.setMatrixA(result);
+            this.view.updateMatrixDisplay('A', this.matrixModel.currentSize, result);
         } else {
-            this.model.matrixB = result;
-            this.view.updateMatrixDisplay('B', this.model.currentSize, result);
+            this.matrixModel.setMatrixB(result);
+            this.view.updateMatrixDisplay('B', this.matrixModel.currentSize, result);
         }
     }
 }

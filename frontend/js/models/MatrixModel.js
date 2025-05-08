@@ -17,8 +17,16 @@ class MatrixModel {
         return this.matrixA;
     }
 
+    getMatrixACopy() {
+        return JSON.parse(JSON.stringify(this.matrixA));
+    }
+
     getMatrixB() {
         return this.matrixB;
+    }
+
+    getMatrixBCopy() {
+        return JSON.parse(JSON.stringify(this.matrixB));
     }
 
     createEmptyMatrix(size) {

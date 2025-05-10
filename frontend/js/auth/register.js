@@ -25,3 +25,15 @@ document.getElementById('register-btn').addEventListener('click', async () => {
 document.getElementById('login-link').addEventListener('click', () => {
     window.location.href = 'login.html';
 });
+
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.querySelector('.auth-form').prepend(errorDiv);
+    setTimeout(() => errorDiv.remove(), 3000);
+}

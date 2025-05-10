@@ -32,6 +32,11 @@ class MatrixController {
         this.view.updateHistory(this.historyModel.getHistory());
     }
 
+    _clearHistory() {
+        this.historyModel.clearHistory();
+        this.view.updateHistory(this.historyModel.getHistory());
+    }
+
     bindEvents() {
         // Очистка матриц
         document.getElementById('clear-a').addEventListener('click', () => {
@@ -47,11 +52,6 @@ class MatrixController {
             this.handleResize(e.target.value);
         });
 
-        // document.querySelectorAll('input[type="number"]').forEach(input => {
-        //     input.onfocus = this.handleFocus(input);
-        //     input.onblur = this.handleBlur;
-        // });
-
         // Обновление данных при вводе
         [this.view.matrixAContainer, this.view.matrixBContainer].forEach(container => {
             container.addEventListener('input', (e) => {
@@ -64,6 +64,12 @@ class MatrixController {
                     );
                 }
             });
+        });
+
+        // Очистка истории
+
+        document.getElementById('clear-history').addEventListener('click', (e) =>{
+            this._clearHistory();
         });
 
         // Бинарные операции

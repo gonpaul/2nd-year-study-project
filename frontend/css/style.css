@@ -156,21 +156,6 @@ h2 {
     color: white;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .matrix-container {
-        flex-direction: column;
-    }
-    
-    .operations-center {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        order: 3;
-        margin-top: 20px;
-    }
-}
-
 .error-message {
     color: red;
     padding: 10px;
@@ -200,14 +185,14 @@ h2 {
     align-items: center;
     gap: 10px;
     padding: 10px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
 }
 
 .history-matrix {
     font-family: monospace;
     white-space: pre;
-    background: rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.1);
     padding: 5px;
     border-radius: 3px;
 }
@@ -222,9 +207,34 @@ h2 {
     margin: 0 10px;
     color: #fff;
 }
+
 /* это чтобы убрать противные стрелочки */
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.history-header h2 {
+    margin-bottom: 0;
+    color: white;
+}
+
+.history-header .clear-button {
+    width: auto;
+    padding: 8px 20px;
+    margin: 0;
+    background-color: #8aa9c9;
+    transition: background-color 0.3s;
+}
+
+.history-header .clear-button:hover {
+    background-color: #7698b8;
 }

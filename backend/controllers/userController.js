@@ -9,7 +9,7 @@ export const registerUser = async (username, email, password) => {
   const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
   const insertedRowId = await UserModel.register({ username, email, password_hash });
   if (insertedRowId) {
-    const allUsers = UserModel.selectAllUsers();
+    const allUsers = await UserModel.selectAllUsers();
     const lastThreeUsers = allUsers.slice(-3);
     console.log(JSON.stringify(lastThreeUsers, null, 2));
     return insertedRowId;
@@ -19,7 +19,8 @@ export const registerUser = async (username, email, password) => {
 
 // Вход пользователя с хешированием
 export const loginUser = async (email, password) => {
-  const user = UserModel.login({ email });
+  const user = await UserModel.login({ email });
+  console.log(user);
   if (!user) {
     return false; // Пользователь не найден
   }

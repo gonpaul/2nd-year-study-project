@@ -1,23 +1,29 @@
 import db from "../config/database.js";
 
 const UserModel = {
-  register: ({ username, email, password_hash }) => {
-      const stmt = db.prepare(`
+  register: async ({ username, email, password_hash }) => {
+      const result = await db.query(`
         INSERT INTO users (username, email, password_hash) 
         VALUES (?, ?, ?)
-      `);
-      const result = stmt.run(username, email, password_hash);
+      `, [username, email, password_hash]);
+      console.log(result);
       // EXAMPLE:  { changes: 1, lastInsertRowid: 15 }
       return result.lastInsertRowid;
   },
 
-  login: ({ email }) => {
-      const stmt = db.prepare(`
+  login: async ({ email }) => {
+      // const stmt = db.prepare(`
+      //   SELECT user_id, username, password_hash 
+      //   FROM users 
+      //   WHERE email = ?
+      // `);
+      // const user = stmt.get(email);
+      const user = await db.query(`
         SELECT user_id, username, password_hash 
         FROM users 
         WHERE email = ?
-      `);
-      const user = stmt.get(email);
+      `, [email]);
+
       return user;
   },
 
@@ -34,11 +40,12 @@ const UserModel = {
       };
   },
 
-  selectAllUsers: () => {
-    const stmt = db.prepare(`
-        SELECT * FROM users
-      `);
-    const users = stmt.all();
+  selectAllUsers: async () => {
+    // const stmt = db.prepare(`
+    //     SELECT * FROM users
+    //   `);
+    // const users = stmt.all();
+    const users = await db.query('SELECT * FROM users');
     return users;
   },
 

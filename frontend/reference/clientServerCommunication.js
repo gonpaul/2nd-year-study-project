@@ -171,4 +171,4 @@ async function deleteCaclHistoryForUser(userId) {
     return await response.json();
 }
 
-module.exports = { addCalculationToHistory, getCaclHistoryByUser, deleteCaclHistoryForUser };
+module.exports = { addCalculationToHistory, getCaclHistoryByUser, deleteCaclHistoryForUser, loginUser, changeUserPassword, registerUser };

@@ -23,7 +23,7 @@ const operations = [
     { id: 9, name: 'multiply', isBinary: true }
 ];
 
-const OperationsTable = {
+const operationsObject = {
     unary: {
         transpose: 1,
         multiplyByScalar: 2,
@@ -37,6 +37,18 @@ const OperationsTable = {
         subtract: 8,
         multiply: 9
     },
+}
+
+const OperationsTable = {
+    transpose: 1,
+    multiplyByScalar: 2,
+    calculateDeterminant: 3,
+    raiseToPower: 4,
+    calculateRank: 5,
+    calculateInverse: 6,
+    add: 7,
+    subtract: 8,
+    multiply: 9
 }
 
 function getOperationById(id) {

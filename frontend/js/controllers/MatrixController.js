@@ -26,7 +26,7 @@ class MatrixController {
             operation: operationType,
             matrices: clonedMatrices,
             result: clonedResult,
-            timestamp: new Date().toISOString()
+            // timestamp: new Date().toISOString()
         });
 
         this.view.updateHistory(this.historyModel.getHistory());

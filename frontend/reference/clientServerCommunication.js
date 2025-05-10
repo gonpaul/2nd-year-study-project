@@ -9,7 +9,7 @@
  * the client-side implementation of server communication.
  */
 
-const apiUrl = process.env.API_URL || 'http://localhost:3000';
+const apiUrl = process.env.API_URL || 'localhost:3000';
 
 /**
  * Register User Request
@@ -150,7 +150,7 @@ async function addCalculationToHistory(userId, operationId, matrixA, matrixB, sc
 }
 
 
-async function getCaclHistoryByUser(userId, limit) {
+async function getCaclHistoryByUser(userId, limit = 10) {
     const response = await fetch(`${apiUrl}/api/calculation-history/${userId}?limit=${limit}`, {
         method: 'GET',
         headers: {

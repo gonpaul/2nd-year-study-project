@@ -3,7 +3,7 @@ const OperationsTable = require("../../reference/operations");
 
 class HistoryModel {
     // use userId=1 for a test, but create it beforehand
-  constructor(userId = null) {
+  constructor(userId = 1) {
       this.userId = userId;
       this.history = [];
 

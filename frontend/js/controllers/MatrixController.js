@@ -1,6 +1,7 @@
 const MatrixModel = require('../models/MatrixModel');
 const MatrixView = require('../views/MatrixView');
 const HistoryModel = require('../models/HistoryModel');
+const { OperationEnums } = require("../../reference/operations.js")
 
 class MatrixController {
     constructor() {
@@ -150,7 +151,7 @@ class MatrixController {
             const matrixA = this.matrixModel.getMatrixACopy();
             const matrixB = this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.add(matrixA, matrixB);
-            this._addHistory('add', [matrixA, matrixB], result);
+            this._addHistory(OperationEnums.ADD, [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -161,7 +162,7 @@ class MatrixController {
             const matrixA = this.matrixModel.getMatrixACopy();
             const matrixB = this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.subtract(matrixA, matrixB);
-            this._addHistory('subtract', [matrixA, matrixB], result);
+            this._addHistory(OperationEnums.SUBTRACT, [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -172,7 +173,7 @@ class MatrixController {
             const matrixA = this.matrixModel.getMatrixACopy();
             const matrixB = this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.multiply(matrixA, matrixB);
-            this._addHistory('multiply', [matrixA, matrixB], result);
+            this._addHistory(OperationEnums.MULTIPLY, [matrixA, matrixB], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -185,7 +186,7 @@ class MatrixController {
             this.matrixModel.swapMatrices();
             this.view.updateMatrixDisplay('A', this.matrixModel.currentSize, this.matrixModel.matrixA);
             this.view.updateMatrixDisplay('B', this.matrixModel.currentSize, this.matrixModel.matrixB);
-            this._addHistory('swap', [originalA, originalB], [this.matrixModel.getMatrixACopy(), this.matrixModel.getMatrixBCopy()]);
+            // this._addHistory('swap', [originalA, originalB], [this.matrixModel.getMatrixACopy(), this.matrixModel.getMatrixBCopy()]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -198,7 +199,7 @@ class MatrixController {
                 : this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.transpose(original);
             this._updateMatrix(matrixId, result);
-            this._addHistory('transpose', [original], result);
+            this._addHistory(OperationEnums.TRANSPOSE, [original], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -211,7 +212,7 @@ class MatrixController {
                 : this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.scalarMultiply(original, scalar);
             this._updateMatrix(matrixId, result);
-            this._addHistory('scalar', [original, [[scalar]]], result);
+            this._addHistory(OperationEnums.MULTIPLYBYSCALAR, [original, [[scalar]]], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -223,7 +224,7 @@ class MatrixController {
                 ? this.matrixModel.getMatrixACopy()
                 : this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.determinant(original);
-            this._addHistory('determinant', [original], [[result]]);
+            this._addHistory(OperationEnums.CALCULATEDETERMINANT, [original], [[result]]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -236,7 +237,7 @@ class MatrixController {
                 : this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.inverse(original);
             this._updateMatrix(matrixId, result);
-            this._addHistory('inverse', [original], result);
+            this._addHistory(OperationEnums.CALCULATEINVERSE, [original], result);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -248,7 +249,7 @@ class MatrixController {
                 ? this.matrixModel.getMatrixACopy()
                 : this.matrixModel.getMatrixBCopy();
             const result = this.matrixModel.rank(original);
-            this._addHistory('rank', [original], [[result]]);
+            this._addHistory(OperationEnums.CALCULATERANK, [original], [[result]]);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -264,7 +265,7 @@ class MatrixController {
                 result = this.matrixModel.multiply(result, original);
             }
             this._updateMatrix(matrixId, result);
-            this._addHistory('power', [original, [[power]]], result);
+            this._addHistory(OperationEnums.RAISETOPOWER, [original, [[power]]], result);
         } catch (error) {
             this.view.showError(error.message);
         }

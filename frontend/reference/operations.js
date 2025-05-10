@@ -39,7 +39,19 @@ const operationsObject = {
     },
 }
 
-const OperationsTable = {
+const OperationEnums = Object.freeze({
+    ADD: 'add',
+    SUBTRACT: 'subtract',
+    MULTIPLY: 'multiply',
+    TRANSPOSE: 'transpose',
+    MULTIPLYBYSCALAR: 'multiplyByScalar',
+    CALCULATEDETERMINANT: 'calculateDeterminant',
+    RAISETOPOWER: 'raiseToPower',
+    CALCULATERANK: 'calculateRank',
+    CALCULATEINVERSE: 'calculateInverse'
+});
+
+const OperationToId= {
     transpose: 1,
     multiplyByScalar: 2,
     calculateDeterminant: 3,
@@ -58,5 +70,6 @@ function getOperationById(id) {
 module.exports = {
     getOperationById,
     operations,
-    OperationsTable 
+    OperationEnums,
+    OperationToId
 }

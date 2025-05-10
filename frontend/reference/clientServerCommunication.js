@@ -9,7 +9,7 @@
  * the client-side implementation of server communication.
  */
 
-const apiUrl = process.env.API_URL || 'localhost:3000';
+const apiUrl = process.env.API_URL || 'http://localhost:3000';
 
 /**
  * Register User Request

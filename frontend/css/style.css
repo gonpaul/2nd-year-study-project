@@ -304,3 +304,17 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 4px;
     cursor: pointer;
 }
+
+.header-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.user-controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

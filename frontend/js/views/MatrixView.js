@@ -58,7 +58,7 @@ class MatrixView {
     }
 
     _formatHistoryEntry(entry) {
-        const { operation, matrices, result } = entry;
+        const { operation, matrices, result, scalarValue } = entry;
         const operators = {
             [OperationEnums.ADD]: '+',
             [OperationEnums.SUBTRACT]: '-',
@@ -73,39 +73,46 @@ class MatrixView {
 
         return `
             <div class="history-entry-row">
-                ${this._formatOperands(matrices, operation, operators)}
+                ${this._formatOperands(matrices, operation, operators, scalarValue)}
                 <span class="history-equals">=</span>
                 ${this._matrixToString(result)}
             </div>
         `;
     }
 
-    _formatOperands(matrices, operation, operators) {
+    _formatOperands(matrices, operation, operators, scalar = null) {
         const operator = operators[operation];
 
         // Обработка специальных случаев
         switch (operation) {
-            case 'scalar':
+            // case 'scalar':
+            case OperationEnums.MULTIPLYBYSCALAR:
                 return `
                     ${this._matrixToString(matrices[0])}
-                    <span class="history-operator">${operator} ${matrices[1][0][0]}</span>
+                    <span class="history-operator">${operator} ${scalar}</span>
                 `;
 
-            case 'power':
+            // case 'power':
+            case OperationEnums.RAISETOPOWER:
                 return `
                     ${this._matrixToString(matrices[0])}
-                    <span class="history-operator">${operator}${matrices[1][0][0]}</span>
+                    <span class="history-operator">${operator}${scalar}</span>
                 `;
 
-            case 'determinant':
-            case 'rank':
-            case 'inverse':
-            case 'transpose':
+            // case 'determinant':
+            case OperationEnums.CALCULATEDETERMINANT:
+            // case 'rank':
+            case OperationEnums.CALCULATERANK:
+            // case 'inverse':
+            case OperationEnums.CALCULATEINVERSE:
+            // case 'transpose':
+            case OperationEnums.TRANSPOSE:
                 return `
                     <span class="history-operator">${operator}</span>
                     ${this._matrixToString(matrices[0])}
                 `;
 
+            // binary opps
             default:
                 return matrices.map((m, i) => `
                     ${i > 0 ? `<span class="history-operator">${operator}</span>` : ''}

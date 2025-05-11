@@ -17,7 +17,7 @@ class MatrixController {
         this.view.updateMatrixDisplay('B', 3, this.matrixModel.matrixB);
     }
 
-    _addHistory(operationType, matrices, result) {
+    _addHistory(operationType, matrices, result, scalarValue = null) {
         const clonedMatrices = matrices.map(m =>
             JSON.parse(JSON.stringify(m))
         );
@@ -27,6 +27,8 @@ class MatrixController {
             operation: operationType,
             matrices: clonedMatrices,
             result: clonedResult,
+            scalarValue
+
         });
 
         this.view.updateHistory(this.historyModel.getHistory());
@@ -209,9 +211,12 @@ class MatrixController {
             const original = matrixId === 'A'
                 ? this.matrixModel.getMatrixACopy()
                 : this.matrixModel.getMatrixBCopy();
+            if (scalar === 0) {
+                scalar = 2;
+            }
             const result = this.matrixModel.scalarMultiply(original, scalar);
             this._updateMatrix(matrixId, result);
-            this._addHistory(OperationEnums.MULTIPLYBYSCALAR, [original, [[scalar]]], result);
+            this._addHistory(OperationEnums.MULTIPLYBYSCALAR, [original], result, scalar);
         } catch (error) {
             this.view.showError(error.message);
         }
@@ -264,7 +269,7 @@ class MatrixController {
                 result = this.matrixModel.multiply(result, original);
             }
             this._updateMatrix(matrixId, result);
-            this._addHistory(OperationEnums.RAISETOPOWER, [original, [[power]]], result);
+            this._addHistory(OperationEnums.RAISETOPOWER, [original], result, power);
         } catch (error) {
             this.view.showError(error.message);
         }

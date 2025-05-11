@@ -11,6 +11,7 @@ function createWindow() {
     });
 
     win.loadFile('./renders/login.html');
+    // win.loadFile('./renders/index.html');
 }
 
 app.whenReady().then(createWindow);

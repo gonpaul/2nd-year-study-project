@@ -3,6 +3,16 @@ const { addCalculationToHistory, getCaclHistoryByUser,
  } = require("../../reference/clientServerCommunication");
 const { getOperationById, OperationToId }= require("../../reference/operations.js");
 
+function prettyPrintAddCalculation(userId, operationId, matrixA, matrixB, scalarValue, result) {
+    console.log("Adding Calculation to History:");
+    console.log(`User ID: ${userId}`);
+    console.log(`Operation ID: ${operationId}`);
+    console.log("Matrix A:", JSON.stringify(matrixA, null, 2)); // Pretty print matrix A
+    console.log("Matrix B:", JSON.stringify(matrixB, null, 2)); // Pretty print matrix B
+    console.log(`Scalar Value: ${scalarValue}`);
+    console.log("Result:", JSON.stringify(result, null, 2)); // Pretty print result
+}
+
 class HistoryModel {
     // use userId=1 for a test, but create it beforehand
   constructor(userId = 1) {
@@ -77,8 +87,18 @@ class HistoryModel {
     //     result: clonedResult,
     // });
       const operationId = OperationToId[operation];
-      await addCalculationToHistory(this.userId, operationId, matrices[0], matrices[1], scalarValue, result);
-      console.log(operation, matrices, result);
+
+      // if it misses it should be null, otherwise
+      // matrixB should be filled up with zeroes if only one value is in matrix
+      // or left unchaged
+      // const matrixB = (!matrices[1] || !Array.isArray(matrices[1]) || 
+      //   (Array.isArray(matrices[1]) && matrices.length !== matrices[0].length )) ? null : matrices[1];
+      const matrixB = !matrices[1] ? null : matrices[1];
+ 
+      console.log("Input data:")
+      console.log(operation, matrices, result, scalarValue);
+      prettyPrintAddCalculation(this.userId, operationId, matrices[0], matrixB, scalarValue, result);
+      await addCalculationToHistory(this.userId, operationId, matrices[0], matrixB, scalarValue, result);
   }
 
   getHistory() {

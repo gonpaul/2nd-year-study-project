@@ -85,22 +85,28 @@ class MatrixView {
 
         // Обработка специальных случаев
         switch (operation) {
-            case 'scalar':
+            // case 'scalar':
+            case OperationEnums.MULTIPLYBYSCALAR:
                 return `
                     ${this._matrixToString(matrices[0])}
                     <span class="history-operator">${operator} ${matrices[1][0][0]}</span>
                 `;
 
-            case 'power':
+            // case 'power':
+            case OperationEnums.RAISETOPOWER:
                 return `
                     ${this._matrixToString(matrices[0])}
                     <span class="history-operator">${operator}${matrices[1][0][0]}</span>
                 `;
 
-            case 'determinant':
-            case 'rank':
-            case 'inverse':
-            case 'transpose':
+            // case 'determinant':
+            case OperationEnums.CALCULATEDETERMINANT:
+            // case 'rank':
+            case OperationEnums.CALCULATERANK:
+            // case 'inverse':
+            case OperationEnums.CALCULATEINVERSE:
+            // case 'transpose':
+            case OperationEnums.TRANSPOSE:
                 return `
                     <span class="history-operator">${operator}</span>
                     ${this._matrixToString(matrices[0])}

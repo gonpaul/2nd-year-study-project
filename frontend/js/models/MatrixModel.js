@@ -29,6 +29,10 @@ class MatrixModel {
         return JSON.parse(JSON.stringify(this.matrixB));
     }
 
+    getSize() {
+        return this.currentSize;
+    }
+
     createEmptyMatrix(size) {
         return Array.from({ length: size }, () =>
             new Array(size).fill(0)

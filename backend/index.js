@@ -4,6 +4,7 @@ import morgan from 'morgan';
 // Import routers
 import userRoutes from './routes/userRoutes.js';
 import calcHistoryRoutes from './routes/calcHistoryRoutes.js';
+import matrixRoutes from "./routes/matrixRoutes.js";
 
 
 // Initialize express app
@@ -19,6 +20,7 @@ app.use(morgan('dev'));
 // localhost:8080/api/users 
 app.use('/api/users', userRoutes);
 app.use('/api/calculation-history', calcHistoryRoutes);
+app.use('/api/matrices', matrixRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

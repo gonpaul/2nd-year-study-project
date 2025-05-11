@@ -1,7 +1,7 @@
 const { addCalculationToHistory, getCaclHistoryByUser,
    deleteCaclHistoryForUser, getMatrixContentById
  } = require("../../reference/clientServerCommunication");
-const { OperationsToId, getOperationById }= require("../../reference/operations.js");
+const { getOperationById, OperationToId }= require("../../reference/operations.js");
 
 class HistoryModel {
     // use userId=1 for a test, but create it beforehand
@@ -76,7 +76,7 @@ class HistoryModel {
     //     matrices: clonedMatrices,
     //     result: clonedResult,
     // });
-      const operationId = OperationsTable[operation];
+      const operationId = OperationToId[operation];
       await addCalculationToHistory(this.userId, operationId, matrices[0], matrices[1], scalarValue, result);
       console.log(operation, matrices, result);
   }

@@ -149,6 +149,12 @@ async function addCalculationToHistory(userId, operationId, matrixA, matrixB, sc
     return await response.json();
 }
 
+/**
+ * 
+ * @param {Number} userId 
+ * @param {Number|10} limit 
+ * @returns an object with a history property that is a list
+ */
 
 async function getCaclHistoryByUser(userId, limit = 10) {
     const response = await fetch(`${apiUrl}/api/calculation-history/${userId}?limit=${limit}`, {
@@ -157,6 +163,7 @@ async function getCaclHistoryByUser(userId, limit = 10) {
             'Content-Type': 'application/json'
         }
     });
+
     return await response.json();
 }
 
@@ -170,5 +177,17 @@ async function deleteCaclHistoryForUser(userId) {
     });
     return await response.json();
 }
+
+async function getMatrixById(matrixId) {
+    const response = await fetch(`${apiUrl}/api/matrices/${matrixId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    return await response.json();
+}
+
 
 module.exports = { addCalculationToHistory, getCaclHistoryByUser, deleteCaclHistoryForUser, loginUser, changeUserPassword, registerUser };

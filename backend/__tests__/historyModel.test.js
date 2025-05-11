@@ -5,9 +5,8 @@ import MatricesModel from '../models/matricesModel.js';
 // import db from "../config/database.js";
 
 const operations = {
-    clear: { name: 'Clear', description: 'Clear the matrix' },
     transpose: { name: 'Transpose', description: 'Transpose the matrix' },
-    findRank: { name: 'Find Rank', description: 'Find the rank of the matrix' },
+    calculateRank: { name: 'Calculate Rank', description: 'Find the rank of the matrix' },
 
     multiply: { name: 'Multiply', description: 'Multiply two matrices' }
 }
@@ -30,12 +29,10 @@ describe('CalcHistoryModel Tests', () => {
     let historyId;
 
     // unary
-    const clearOperation = OperationModel.getOperationByName(operations.clear.name);
     const transposeOperation = OperationModel.getOperationByName(operations.transpose.name);
-    const findRankOperation = OperationModel.getOperationByName(operations.findRank.name);
-    const clearOperationId = clearOperation.operation_id;
+    const calculateRank = OperationModel.getOperationByName(operations.calculateRank.name);
     const transposeOperationId = transposeOperation.operation_id;
-    const findRankOperationId = findRankOperation.operation_id;
+    const calculateRankOperationId = calculateRank.operation_id;
 
     // binary
     const multiplyOperation = OperationModel.getOperationByName(operations.multiply.name);

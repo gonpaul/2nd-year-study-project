@@ -9,10 +9,17 @@ document.getElementById('login-btn').addEventListener('click', async () => {
 
     try {
         const response = await loginUser(email, password);
+        // message:
+        //     "Successful entry"
+        // user:
+        //     user_id: 1,
+        //     username: "test"
+        console.log(response);
         
-        if (response.userId && response.token) {
-            localStorage.setItem('userId', response.userId);
-            localStorage.setItem('token', response.token);
+        // if (response.user_id && response.token) {
+        if (response.user.user_id) {
+            localStorage.setItem('userId', response.user.user_id);
+            // localStorage.setItem('token', response.token);
             window.location.href = 'index.html';
         } else {
             showError(response.message || 'Login failed');

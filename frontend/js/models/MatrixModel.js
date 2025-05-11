@@ -99,17 +99,19 @@ class MatrixModel {
     determinant(matrix) {
         const size = matrix.length;
 
+        // Базовые случаи
+        if (size === 1) return matrix[0][0];
         if (size === 2) {
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         }
 
-        if (size === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        }
+        // Рекурсивное разложение по первой строке
+        return matrix[0].reduce(
+            (sum, val, col) => sum + (-1) ** col * val * this.determinant(
+                matrix.slice(1)
+                    .map(row => row.filter((_, j) => j !== col))
+            ), 0
+        );
     }
 
 
@@ -125,19 +127,19 @@ class MatrixModel {
     // Минор элемента
     minor(matrix, row, col) {
         return this.determinant(
-            matrix.filter((_, i) => i !== row)
-                .map(r => r.filter((_, j) => j !== col))
+            matrix.map(r => r.filter((_, j) => j !== col))
+                .filter((_, i) => i !== row)
         );
     }
 
     inverse(matrix) {
         const det = this.determinant(matrix);
-        if (det === 0) throw new Error('Matrix is singular');
+        if (Math.abs(det) < 1e-10) throw new Error('Matrix is singular');
 
-        const size = matrix.length;
-        const adjugate = this.transpose(this.cofactor(matrix));
-
-        return this.scalarMultiply(adjugate, 1 / det);
+        return this.scalarMultiply(
+            this.transpose(this.cofactor(matrix)),
+            1 / det
+        );
     }
 
     rank(matrix) {

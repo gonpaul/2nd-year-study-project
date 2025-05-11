@@ -7,7 +7,7 @@ class MatrixController {
     constructor() {
         this.matrixModel = new MatrixModel();
         this.view = new MatrixView();
-        this.historyModel = new HistoryModel();
+        this.historyModel = new HistoryModel(localStorage.userId);
         this.bindEvents();
         this.initializeMatrices();
     }
@@ -27,7 +27,6 @@ class MatrixController {
             operation: operationType,
             matrices: clonedMatrices,
             result: clonedResult,
-            // timestamp: new Date().toISOString()
         });
 
         this.view.updateHistory(this.historyModel.getHistory());

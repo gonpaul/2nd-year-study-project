@@ -1,7 +1,7 @@
 const { addCalculationToHistory, getCaclHistoryByUser,
    deleteCaclHistoryForUser, getMatrixContentById
  } = require("../../reference/clientServerCommunication");
-const { OperationsToId, getOperationById, OperationToId }= require("../../reference/operations.js");
+const { getOperationById, OperationToId }= require("../../reference/operations.js");
 
 class HistoryModel {
     // use userId=1 for a test, but create it beforehand

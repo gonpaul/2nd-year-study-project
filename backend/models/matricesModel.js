@@ -34,6 +34,28 @@ const MatricesModel = {
         return stmt.get(matrix_id); // выполняем SQL-запрос в котором возращаем одну строку резулультата (объект с данными матрицы: matrix_id, user_id, rows, columns), иначе undefined
     },
 
+    getFullMatrixById: (matrix_id) => {
+        // create a transaction that gradually builds up a matrix
+        const transactionFn = db.transaction((matrix_id) => {
+            const matrixMetadata = MatricesModel.getMatrixById(matrix_id);
+            const matrixId = matrixMetadata.matrix_id;
+            const rows = matrixMetadata.rows;
+            const columns = matrixMetadata.columns;
+            const resultMatrix = new Array(rows).fill().map(() => new Array(columns).fill(0));
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    const element = MatrixElementsModel.getElement(matrixId, r, c);
+                    resultMatrix[r][c] = element.value;
+                }
+            } 
+
+            return resultMatrix;
+        })
+
+        return transactionFn(matrix_id);
+    },
+
     // удаление мтарицы (и связанных элементов)
     deleteMatrix: ({ matrix_id }) => {
         // удаление элементов (???)

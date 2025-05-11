@@ -1,3 +1,5 @@
+const { OperationEnums } = require("../../reference/operations.js")
+
 class MatrixView {
     constructor() {
         this.matrixAContainer = document.getElementById('matrix-a');
@@ -58,15 +60,15 @@ class MatrixView {
     _formatHistoryEntry(entry) {
         const { operation, matrices, result } = entry;
         const operators = {
-            add: '+',
-            subtract: '-',
-            multiply: '*',
-            transpose: 'trans',
-            scalar: 'mulBy',
-            determinant: 'det',
-            inverse: 'inv',
-            rank: 'rank',
-            power: '^',
+            [OperationEnums.ADD]: '+',
+            [OperationEnums.SUBTRACT]: '-',
+            [OperationEnums.MULTIPLY]: '*',
+            [OperationEnums.TRANSPOSE]: 'trans',
+            [OperationEnums.MULTIPLYBYSCALAR]: 'mulBy',
+            [OperationEnums.CALCULATEDETERMINANT]: 'det',
+            [OperationEnums.CALCULATEINVERSE]: 'inv',
+            [OperationEnums.CALCULATERANK]: 'rank',
+            [OperationEnums.RAISETOPOWER]: '^',
         };
 
         return `

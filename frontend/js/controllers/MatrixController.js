@@ -7,7 +7,7 @@ class MatrixController {
     constructor() {
         this.matrixModel = new MatrixModel();
         this.view = new MatrixView();
-        this.historyModel = new HistoryModel(localStorage.userId ?? 1);
+        this.historyModel = new HistoryModel(localStorage.userId);
         this.bindEvents();
         this.initializeMatrices();
     }

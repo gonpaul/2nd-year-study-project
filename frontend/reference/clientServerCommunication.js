@@ -178,7 +178,29 @@ async function deleteCaclHistoryForUser(userId) {
     return await response.json();
 }
 
-async function getMatrixById(matrixId) {
+/**
+ * 
+ * @param {Integer} matrixId 
+ * @returns an object with history property that is a nested array of arrays
+ * @example 
+ * // call a function
+ * const result = getMatrixContentById(9);
+ * console.log(result);
+ * // here is an example of an output to a call
+ *  {
+ *      "matrix": [
+ *          [
+ *              6,
+ *              8
+ *          ],
+ *          [
+ *              10,
+ *              12
+ *          ]
+ *      ]
+ *  }
+ */
+async function getMatrixContentById(matrixId) {
     const response = await fetch(`${apiUrl}/api/matrices/${matrixId}`, {
         method: 'GET',
         headers: {
@@ -190,4 +212,6 @@ async function getMatrixById(matrixId) {
 }
 
 
-module.exports = { addCalculationToHistory, getCaclHistoryByUser, deleteCaclHistoryForUser, loginUser, changeUserPassword, registerUser };
+module.exports = { addCalculationToHistory, getCaclHistoryByUser, 
+    deleteCaclHistoryForUser, loginUser, changeUserPassword,
+    registerUser, getMatrixContentById };

@@ -1,5 +1,5 @@
 const { addCalculationToHistory, getCaclHistoryByUser,
-   deleteCaclHistoryForUser, getMatrixById
+   deleteCaclHistoryForUser, getMatrixContentById
  } = require("../../reference/clientServerCommunication");
 const { OperationsToId, getOperationById }= require("../../reference/operations.js");
 
@@ -44,9 +44,9 @@ class HistoryModel {
               // scalarValue: Number (for scalar multiplication) | null for everything else
         // }
         // here should be a call to a server to obtain both matrices
-        const matrixA = getMatrixById(historyObj.matrix_a_id);
-        const matrixB = getMatrixById(historyObj.matrix_b_id);
-        const resultMatrix = getMatrixById(historyObj.result_matrix_id);
+        const matrixA = getMatrixContentById(historyObj.matrix_a_id);
+        const matrixB = getMatrixContentById(historyObj.matrix_b_id);
+        const resultMatrix = getMatrixContentById(historyObj.result_matrix_id);
 
         const entry = {
           operation: getOperationById(historyObj.operation_id).name ?? historyObj.operation_name,

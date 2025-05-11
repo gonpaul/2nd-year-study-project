@@ -1,8 +1,4 @@
 const { app, BrowserWindow } = require('electron');
-const path = require('path');
-if (process.platform === 'win32') {
-    process.env.PATH = process.env.PATH + ';' + process.cwd();
-}
 function createWindow() {
     const win = new BrowserWindow({
         width: 1200,
@@ -14,7 +10,7 @@ function createWindow() {
         }
     });
 
-    win.loadFile(path.join(__dirname, 'renders', 'index.html'));
+    win.loadFile('./renders/login.html');
 }
 
 app.whenReady().then(createWindow);

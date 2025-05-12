@@ -96,7 +96,7 @@ class MatrixView {
             case OperationEnums.RAISETOPOWER:
                 return `
                     ${this._matrixToString(matrices[0])}
-                    <span class="history-operator">${operator}${scalar}</span>
+                    <span class="history-operator">${operator} ${scalar}</span>
                 `;
 
             // case 'determinant':
@@ -123,7 +123,7 @@ class MatrixView {
 
     _matrixToString(matrix) {
         if (!matrix || matrix.length === 0) return '';
-        if (matrix[0].length === 1) return matrix[0][0].toFixed(2);
+        // if (matrix[0].length === 1) return matrix[0][0].toFixed(2);
 
         return `<div class="history-matrix">${matrix.map(row => `[ ${row.map(num => Number(num.toFixed(2))).join('  ')} ]`).join('<br>')}</div>`;
     }

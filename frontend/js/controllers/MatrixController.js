@@ -10,11 +10,17 @@ class MatrixController {
         this.historyModel = new HistoryModel(localStorage.userId);
         this.bindEvents();
         this.initializeMatrices();
+        this.initializeHistory();
     }
 
     initializeMatrices() {
         this.view.updateMatrixDisplay('A', 3, this.matrixModel.matrixA);
         this.view.updateMatrixDisplay('B', 3, this.matrixModel.matrixB);
+    }
+
+    async initializeHistory() {
+        await this.historyModel.update();
+        this.view.updateHistory(this.historyModel.getHistory());
     }
 
     _addHistory(operationType, matrices, result, scalarValue = null) {
@@ -34,8 +40,8 @@ class MatrixController {
         this.view.updateHistory(this.historyModel.getHistory());
     }
 
-    _clearHistory() {
-        this.historyModel.clearHistory();
+    async _clearHistory() {
+        await this.historyModel.clearHistory();
         this.view.updateHistory(this.historyModel.getHistory());
     }
 
@@ -70,8 +76,8 @@ class MatrixController {
 
         // Очистка истории
 
-        document.getElementById('clear-history').addEventListener('click', (e) =>{
-            this._clearHistory();
+        document.getElementById('clear-history').addEventListener('click', async (e) =>{
+            await this._clearHistory();
         });
 
         // Бинарные операции

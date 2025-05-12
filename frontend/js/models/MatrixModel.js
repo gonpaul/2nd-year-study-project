@@ -95,6 +95,9 @@ class MatrixModel {
     }
 
     scalarMultiply(matrix, scalar) {
+        if (isNaN(scalar)) {
+            throw new Error('Enter a number');
+        }
         return matrix.map(row =>
             row.map(val => val * scalar)
         );

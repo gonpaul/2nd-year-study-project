@@ -76,7 +76,7 @@ class MatrixController {
 
         // Очистка истории
 
-        document.getElementById('clear-history').addEventListener('click', async (e) =>{
+        document.getElementById('clear-history').addEventListener('click', async (e) => {
             await this._clearHistory();
         });
 
@@ -217,9 +217,6 @@ class MatrixController {
             const original = matrixId === 'A'
                 ? this.matrixModel.getMatrixACopy()
                 : this.matrixModel.getMatrixBCopy();
-            if (scalar === 0) {
-                scalar = 2;
-            }
             const result = this.matrixModel.scalarMultiply(original, scalar);
             this._updateMatrix(matrixId, result);
             this._addHistory(OperationEnums.MULTIPLYBYSCALAR, [original], result, scalar);
@@ -267,6 +264,9 @@ class MatrixController {
 
     handlePower(matrixId, power) {
         try {
+            if (isNaN(power)) {
+                throw new Error('Enter a number');
+            }
             const original = matrixId === 'A'
                 ? this.matrixModel.getMatrixACopy()
                 : this.matrixModel.getMatrixBCopy();

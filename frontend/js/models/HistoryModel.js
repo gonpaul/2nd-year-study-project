@@ -15,7 +15,7 @@ function prettyPrintAddCalculation(userId, operationId, matrixA, matrixB, scalar
 
 class HistoryModel {
     // use userId=1 for a test, but create it beforehand
-  constructor(userId = 1) {
+  constructor(userId) {
       this.userId = userId;
       this.history = [];
 
@@ -26,6 +26,10 @@ class HistoryModel {
 
   async update() {
     const response = await getCaclHistoryByUser(this.userId);
+    if (!response) {
+      console.error("Failed to fetch the history for userId = ", this.userId);
+      return false;
+    }
     const historyList = response.history;
     const newHistory = [];
   //   {
@@ -45,7 +49,7 @@ class HistoryModel {
   //         }
   //     ]
   // }
-    for (historyObj of historyList) {
+    for (const historyObj of historyList) {
       // format each element to be an object with the following props
         //  { 
               // operation: String. name for an operation,
@@ -54,12 +58,22 @@ class HistoryModel {
               // scalarValue: Number (for scalar multiplication) | null for everything else
         // }
         // here should be a call to a server to obtain both matrices
-        const matrixA = getMatrixContentById(historyObj.matrix_a_id);
-        const matrixB = getMatrixContentById(historyObj.matrix_b_id);
-        const resultMatrix = getMatrixContentById(historyObj.result_matrix_id);
+        const matrixAResponse = await getMatrixContentById(historyObj.matrix_a_id);
+        let matrixA;
+        if (matrixAResponse) {
+          matrixA = matrixAResponse.matrix;
+        }
+        const matrixBResponse = (historyObj.matrix_b_id === null) ? null : await getMatrixContentById(historyObj.matrix_b_id);
+        let matrixB = null;
+        if (matrixBResponse) {
+          matrixB = matrixBResponse.matrix;
+        }
+        const resultMatrixResponse = await getMatrixContentById(historyObj.result_matrix_id);
+        const resultMatrix = resultMatrixResponse.matrix;
+
 
         const entry = {
-          operation: getOperationById(historyObj.operation_id).name ?? historyObj.operation_name,
+          operation: getOperationById(historyObj.operation_id).name,
           matrices: [matrixA, matrixB],
           result: resultMatrix,
           scalarValue: historyObj.scalar_value,
@@ -72,7 +86,7 @@ class HistoryModel {
     }
 
     this.history = newHistory;
-    return this.history;
+    return true;
   }
 
   async addEntry({ operation, matrices, result, scalarValue = null }) {

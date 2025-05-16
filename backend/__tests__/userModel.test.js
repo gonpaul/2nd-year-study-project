@@ -1,4 +1,4 @@
-import UserModel from "../models/userModel.js";
+const UserModel = require("../models/userModel.js");
 
 const resultId = UserModel.register({
     username: 'test_user2',

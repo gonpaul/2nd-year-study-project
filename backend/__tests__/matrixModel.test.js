@@ -1,5 +1,5 @@
-import MatricesModel from '../models/matricesModel.js'; // ваш модуль
-import db from '../config/database.js'; // подключение к базе данных
+const MatricesModel = require('../models/matricesModel.js'); // ваш модуль
+const db = require('../config/database.js'); // подключение к базе данных
 
 describe('createMatrix', () => {
   const testUserId = 1;

@@ -11,8 +11,8 @@ async function migrateAndSeedDatabase() {
   try {
     await db.migrate.latest();
     console.log('Database migrated successfully.');
-    // await db.seed.run();
-    // console.log('Database seeded successfully.');
+    await db.seed.run();
+    console.log('Database seeded successfully.');
   } catch (error) {
     console.error('Error migrating database:', error);
   }

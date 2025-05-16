@@ -1,7 +1,7 @@
-import UserModel from '../models/userModel.js';
-import CalcHistoryModel from '../models/calcHistoryModel.js';
-import OperationModel from '../models/operationModel.js';
-import MatricesModel from '../models/matricesModel.js';
+const UserModel = require('../models/userModel.js');
+const CalcHistoryModel = require('../models/calcHistoryModel.js');
+const OperationModel = require('../models/operationModel.js');
+const MatricesModel = require('../models/matricesModel.js');
 // import db from "../config/database.js";
 
 const operations = {

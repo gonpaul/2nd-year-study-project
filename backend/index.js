@@ -1,10 +1,10 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
 // Import routers
-import userRoutes from './routes/userRoutes.js';
-import calcHistoryRoutes from './routes/calcHistoryRoutes.js';
-import matrixRoutes from "./routes/matrixRoutes.js";
+const userRoutes = require('./routes/userRoutes.js');
+const calcHistoryRoutes = require('./routes/calcHistoryRoutes.js');
+const matrixRoutes = require("./routes/matrixRoutes.js");
 
 
 // Initialize express app

@@ -1,6 +1,6 @@
-import express from 'express';
-import calcHistoryController from '../controllers/calcHistoryController.js';
-import { convertMatricesToIds } from '../utils/matrixConverter.js';
+const express = require('express');
+const calcHistoryController = require('../controllers/calcHistoryController.js');
+const { convertMatricesToIds } = require('../utils/matrixConverter.js');
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ const router = express.Router();
 // const calcHistoryController = require('../controllers/calcHistoryController');
 
 // Add calculation to history
-router.post('/add', (req, res) => {
+router.post('/add', async (req, res) => {
   const { userId, operationId, matrixA, matrixB, resultMatrix, scalarValue } = req.body;
 
   // Basic validation
@@ -20,15 +20,15 @@ router.post('/add', (req, res) => {
 
   try {
     // Convert matrices to database entries and get their IDs
-    const { matrixAId, matrixBId, resultMatrixId } = convertMatricesToIds({
+    const { matrixAId, matrixBId, resultMatrixId } = await convertMatricesToIds(
       userId,
       matrixA,
       matrixB,
       resultMatrix
-    });
+    );
     
     // Add calculation to history
-    const result = calcHistoryController.addCalculation(
+    const result = await calcHistoryController.addCalculation(
       userId, 
       operationId, 
       matrixAId, 
@@ -52,11 +52,11 @@ router.post('/add', (req, res) => {
 });
 
 // Get calculation history for a user
-router.get('/:userId', (req, res) => {
+router.get('/:userId', async (req, res) => {
   const { userId } = req.params;
   const { limit } = req.query;
 
-  const result = calcHistoryController.getHistoryByUserId(userId, limit ? parseInt(limit) : undefined);
+  const result = await calcHistoryController.getHistoryByUserId(userId, limit ? parseInt(limit) : undefined);
   
   if (result.success) {
     res.json({ history: result.history });
@@ -66,10 +66,10 @@ router.get('/:userId', (req, res) => {
 });
 
 // Get specific calculation history record
-router.get('/record/:historyId', (req, res) => {
+router.get('/record/:historyId', async (req, res) => {
   const { historyId } = req.params;
   
-  const result = calcHistoryController.getHistoryById(historyId);
+  const result = await calcHistoryController.getHistoryById(historyId);
   
   if (result.success) {
     res.json({ history: result.history });
@@ -79,10 +79,10 @@ router.get('/record/:historyId', (req, res) => {
 });
 
 // Delete a calculation history record
-router.delete('/record/:historyId', (req, res) => {
+router.delete('/record/:historyId', async (req, res) => {
   const { historyId } = req.params;
   
-  const result = calcHistoryController.deleteHistory(historyId);
+  const result = await calcHistoryController.deleteHistory(historyId);
   
   if (result.success) {
     res.json({ message: 'History record deleted successfully' });
@@ -92,10 +92,10 @@ router.delete('/record/:historyId', (req, res) => {
 });
 
 // Clear all calculation history for a user
-router.delete('/user/:userId', (req, res) => {
+router.delete('/user/:userId', async (req, res) => {
   const { userId } = req.params;
   
-  const result = calcHistoryController.clearUserHistory(userId);
+  const result = await calcHistoryController.clearUserHistory(userId);
   
   if (result.success) {
     res.json({ message: 'User history cleared successfully' });
@@ -104,4 +104,4 @@ router.delete('/user/:userId', (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

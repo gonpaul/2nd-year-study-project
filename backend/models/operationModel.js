@@ -1,71 +1,72 @@
-import db from "../config/database.js";
+const db = require("../config/database.js");
 
 const OperationModel = {
     /**
      * Get an operation by its ID
      * @param {number} operationId - The ID of the operation to retrieve
-     * @returns {Object|null} - The operation object or null if not found
+     * @returns {Promise<Object|undefined>} - A promise that resolves to the operation object or undefined if not found
      */
-    getOperationById: (operationId) => {
-        const stmt = db.prepare(`
-            SELECT * FROM operations 
-            WHERE operation_id = ?
-        `);
-        return stmt.get(operationId);
+    getOperationById: async (operationId) => {
+        try {
+            console.log('Method: getOperationById in operationModel');
+            const operation = await db('operations').where('id', operationId).first();
+            console.log('Result: ', operation); // returns an object with operation data
+            return operation;
+        } catch (error) {
+            console.error('Error getting operation by ID in operationModel:', error);
+            throw error; // Rethrow the error for handling elsewhere
+        }
     },
 
     /**
      * Get an operation by its name
      * @param {string} operationName - The name of the operation to retrieve
-     * @returns {Object|undefined} - The operation object or undefined if not found
+     * @returns {Promise<Object|undefined>} - A promise that resolves to the operation object or undefined if not found
      */
-    getOperationByName: (operationName) => {
-        const stmt = db.prepare(`
-            SELECT * FROM operations 
-            WHERE operation_name = ?
-        `);
-        return stmt.get(operationName);
+    getOperationByName: async (operationName) => {
+        try {
+            console.log('Method: getOperationByName in operationModel');
+            const operation = await db('operations').where('name', operationName).first();
+            console.log('Result: ', operation); // returns an object with operation data
+            return operation;
+        } catch (error) {
+            console.error('Error getting operation by name in operationModel:', error);
+            throw error; // Rethrow the error for handling elsewhere
+        }
     },
 
     /**
      * Get all available operations
-     * @returns {Array} - Array of operation objects
+     * @returns {Promise<Array>} - A promise that resolves to an array of operation objects
      */
-    getAllOperations: () => {
-        const stmt = db.prepare(`
-            SELECT * FROM operations
-            ORDER BY operation_name
-        `);
-        return stmt.all();
-    },
-
-    /**
-     * Add a new operation
-     * @param {Object} operation - Object containing operation details
-     * @returns {number} - The ID of the newly added operation
-     */
-    addOperation: ({ operation_name, description, is_binary }) => {
-        const stmt = db.prepare(`
-            INSERT INTO operations (operation_name, description, is_binary)
-            VALUES (?, ?, ?)
-        `);
-        const result = stmt.run(operation_name, description, is_binary ? 1 : 0);
-        return result.lastInsertRowid;
+    getAllOperations: async () => {
+        try {
+            console.log('Method: getAllOperations in operationModel');
+            const operations = await db('operations').orderBy('name');
+            console.log('Result: ', operations); // returns an array of objects with operation data
+            return operations;
+        } catch (error) {
+            console.error('Error getting all operations in operationModel:', error);
+            throw error; // Rethrow the error for handling elsewhere
+        }
     },
 
     /**
      * Check if operation exists by name
      * @param {string} name - Operation name to check
-     * @returns {boolean} - True if operation exists, false otherwise
+     * @returns {Promise<boolean>} - A promise that resolves to true if operation exists, false otherwise
      */
-    operationExists: (name) => {
-        const stmt = db.prepare(`
-            SELECT 1 FROM operations 
-            WHERE operation_name = ? 
-            LIMIT 1
-        `);
-        return stmt.get(name) !== undefined;
+    operationExists: async (name) => {
+        try {
+            console.log('Method: operationExists in operationModel');
+            const operation = await db('operations').where('name', name).first();
+            console.log('Result: ', operation); // returns an object with operation data
+            return operation !== undefined;
+        } catch (error) {
+            console.error('Error checking if operation exists in operationModel:', error);
+            throw error; // Rethrow the error for handling elsewhere
+        }
     }
 };
 
-export default OperationModel; 
+module.exports = OperationModel;

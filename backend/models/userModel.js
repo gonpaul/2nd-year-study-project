@@ -1,68 +1,111 @@
-import db from "../config/database.js";
+const db = require("../config/database.js");
 
 const UserModel = {
-  register: ({ username, email, password_hash }) => {
-      const stmt = db.prepare(`
-        INSERT INTO users (username, email, password_hash) 
-        VALUES (?, ?, ?)
-      `);
-      const result = stmt.run(username, email, password_hash);
-      // EXAMPLE:  { changes: 1, lastInsertRowid: 15 }
-      return result.lastInsertRowid;
+  /**
+   * Register a new user
+   * @param {string} username - The username for the new user
+   * @param {string} email - The email for the new user
+   * @param {string} password_hash - The hashed password for the new user
+   * @returns {Promise<number>} - A promise that resolves to the ID of the newly registered user
+   */
+  register: async (username, email, password_hash) => {
+    try {
+      console.log('Method: register in userModel');
+      await db.insert({username, email, password_hash}).into('users');
+      // returns id as [ 1 ] in sqlite, and an object with metadata in postgres
+      const id = (await db('users')).at('-1').id;
+      console.log('Result: ', id);
+      return id;
+    } catch (error) {
+      console.error('Error registering user in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 
-  login: ({ email }) => {
-      const stmt = db.prepare(`
-        SELECT user_id, username, password_hash 
-        FROM users 
-        WHERE email = ?
-      `);
-      const user = stmt.get(email);
+  /**
+   * Find a user by email for login
+   * @param {string} email - The email to search for
+   * @returns {Promise<Object|undefined>} - A promise that resolves to the user object or undefined if not found
+   */
+  login: async ( email ) => {
+    try {
+      console.log('Method: login in userModel');
+      const user = await db('users').where('email', email).first();
+      console.log('Result: ', user); // returns an object with user data
       return user;
+    } catch (error) {
+      console.error('Error logging in user in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 
-  updatePassword: ({ user_id, new_password_hash }) => {
-      const stmt = db.prepare(`
-        UPDATE users 
-        SET password_hash = ? 
-        WHERE user_id = ?
-      `);
-      const result = stmt.run(new_password_hash, user_id);
-      return {
-        changes: result.changes,
-        success: result.changes > 0
-      };
+  /**
+   * Update a user's password
+   * @param {number} user_id - The ID of the user
+   * @param {string} new_password_hash - The new hashed password
+   * @returns {Promise<boolean>} - A promise that resolves to true if the password was updated successfully
+   */
+  updatePassword: async ( user_id, new_password_hash ) => {
+    try {
+      console.log('Method: updatePassword in userModel');
+      const isUpdated = await db('users').where('id', user_id).update({password_hash: new_password_hash});
+      console.log('Result: ', isUpdated); // returns a boolean
+      return isUpdated;
+    } catch (error) {
+      console.error('Error updating password in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 
-  selectAllUsers: () => {
-    const stmt = db.prepare(`
-        SELECT * FROM users
-      `);
-    const users = stmt.all();
-    return users;
+  /**
+   * Get all users in the system
+   * @returns {Promise<Array>} - A promise that resolves to an array of all user objects
+   */
+  selectAllUsers: async () => {
+    try {
+      console.log('Method: selectAllUsers in userModel');
+      const users = await db.select('*').from('users');
+      console.log('Result: ', users); // returns an array of objects with user data
+      return users;
+    } catch (error) {
+      console.error('Error selecting all users in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 
-  getUserByEmail: (email) => {
-    const result = db.prepare(`
-      SELECT * FROM users WHERE email = ?
-    `).get(email)
-    // console.log(result);
-    return result;
+  /**
+   * Find a user by their email address
+   * @param {string} email - The email to search for
+   * @returns {Promise<Object|undefined>} - A promise that resolves to the user object or undefined if not found
+   */
+  getUserByEmail: async (email) => {
+    try {
+      console.log('Method: getUserByEmail in userModel');
+      const user = await db('users').where('email', email).first();
+      console.log('Result: ', user); // returns an object with user data
+      return user;
+    } catch (error) {
+      console.error('Error getting user by email in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 
   /**
    * Delete a user by their ID
    * @param {number} userId - The ID of the user to delete
-   * @returns {boolean} - True if user was deleted successfully, false otherwise
+   * @returns {Promise<boolean>} - A promise that resolves to true if user was deleted successfully
    */
-  deleteUser: (userId) => {
-    const stmt = db.prepare(`
-      DELETE FROM users
-      WHERE user_id = ?
-    `);
-    const result = stmt.run(userId);
-    return result.changes > 0;
+  deleteUser: async (userId) => {
+    try {
+      console.log('Method: deleteUser in userModel');
+      const isDeleted = await db('users').where('id', userId).delete();
+      console.log('Result: ', isDeleted); // returns a boolean
+      return isDeleted;
+    } catch (error) {
+      console.error('Error deleting user in userModel:', error);
+      throw error; // Rethrow the error for handling elsewhere
+    }
   },
 };
 
-export default UserModel;
+module.exports = UserModel;

@@ -1,17 +1,17 @@
-import CalcHistoryModel from "../models/calcHistoryModel.js";
-import OperationModel from "../models/operationModel.js";
+const CalcHistoryModel = require("../models/calcHistoryModel.js");
+const OperationModel = require("../models/operationModel.js");
 
-export const addUnaryCalculation = (userId, operationId, matrixAId, resultMatrixId, scalarValue = null) => {
+const addUnaryCalculation = async (userId, operationId, matrixAId, resultMatrixId, scalarValue = null) => {
     try {
         // Add the calculation to history
-        const historyId = CalcHistoryModel.addCalculation({
-            user_id: userId,
-            operation_id: operationId,
-            result_matrix_id: resultMatrixId,
-            matrix_a_id: matrixAId,
-            matrix_b_id: null,
-            scalar_value: scalarValue
-        });
+        const historyId = await CalcHistoryModel.addCalculation(
+            userId,
+            operationId,
+            resultMatrixId,
+            matrixAId,
+            null,
+            scalarValue
+        );
         
         return { success: true, historyId };
     } catch (error) {
@@ -20,17 +20,17 @@ export const addUnaryCalculation = (userId, operationId, matrixAId, resultMatrix
     }
 };
 
-export const addBinaryCalculation = (userId, operationId, matrixAId, matrixBId, resultMatrixId) => {
+const addBinaryCalculation = async (userId, operationId, matrixAId, matrixBId, resultMatrixId) => {
     try {
         // Add the calculation to history
-        const historyId = CalcHistoryModel.addCalculation({
-            user_id: userId,
-            operation_id: operationId,
-            result_matrix_id: resultMatrixId,
-            matrix_a_id: matrixAId,
-            matrix_b_id: matrixBId,
-            scalar_value: null
-        });
+        const historyId = await CalcHistoryModel.addCalculation(
+            userId,
+            operationId,
+            resultMatrixId,
+            matrixAId,
+            matrixBId,
+            null
+        );
         
         return { success: true, historyId };
     } catch (error) {
@@ -39,10 +39,10 @@ export const addBinaryCalculation = (userId, operationId, matrixAId, matrixBId, 
     }
 };
 
-export const addCalculation = (userId, operationId, matrixAId, matrixBId, resultMatrixId, scalarValue) => {
+const addCalculation = async (userId, operationId, matrixAId, matrixBId, resultMatrixId, scalarValue) => {
     try {
         // Check if the operation is binary
-        const operation = OperationModel.getOperationById(operationId);
+        const operation = await OperationModel.getOperationById(operationId);
         
         if (!operation) {
             throw new Error(`Operation with ID ${operationId} not found`);
@@ -54,10 +54,10 @@ export const addCalculation = (userId, operationId, matrixAId, matrixBId, result
                 throw new Error('Matrix B ID is required for binary operations');
             }
             
-            return addBinaryCalculation(userId, operationId, matrixAId, matrixBId, resultMatrixId);
+            return await addBinaryCalculation(userId, operationId, matrixAId, matrixBId, resultMatrixId);
         } else {
             // For unary operations (operations on a single matrix, possibly with a scalar)
-            return addUnaryCalculation(userId, operationId, matrixAId, resultMatrixId, scalarValue);
+            return await addUnaryCalculation(userId, operationId, matrixAId, resultMatrixId, scalarValue);
         }
     } catch (error) {
         console.error('Error adding calculation:', error);
@@ -65,9 +65,9 @@ export const addCalculation = (userId, operationId, matrixAId, matrixBId, result
     }
 };
 
-export const getHistoryByUserId = (userId, limit = 50) => {
+const getHistoryByUserId = async (userId, limit = 50) => {
     try {
-        const history = CalcHistoryModel.getHistoryByUserId(userId, limit);
+        const history = await CalcHistoryModel.getHistoryByUserId(userId, limit);
         return { success: true, history };
     } catch (error) {
         console.error('Error getting history:', error);
@@ -75,9 +75,9 @@ export const getHistoryByUserId = (userId, limit = 50) => {
     }
 };
 
-export const getHistoryById = (historyId) => {
+const getHistoryById = async (historyId) => {
     try {
-        const history = CalcHistoryModel.getHistoryById(historyId);
+        const history = await CalcHistoryModel.getHistoryById(historyId);
         
         if (!history) {
             return { success: false, error: 'History record not found' };
@@ -90,9 +90,9 @@ export const getHistoryById = (historyId) => {
     }
 };
 
-export const deleteHistory = (historyId) => {
+const deleteHistory = async (historyId) => {
     try {
-        const success = CalcHistoryModel.deleteHistory(historyId);
+        const success = await CalcHistoryModel.deleteHistory(historyId);
         
         if (!success) {
             return { success: false, error: 'Failed to delete history or record not found' };
@@ -105,9 +105,9 @@ export const deleteHistory = (historyId) => {
     }
 };
 
-export const clearUserHistory = (userId) => {
+const clearUserHistory = async (userId) => {
     try {
-        const success = CalcHistoryModel.clearUserHistory(userId);
+        const success = await CalcHistoryModel.clearUserHistory(userId);
         
         if (!success) {
             return { success: false, error: 'Failed to clear history or no records found' };
@@ -120,7 +120,7 @@ export const clearUserHistory = (userId) => {
     }
 };
 
-export default {
+module.exports = {
     addUnaryCalculation,
     addBinaryCalculation,
     addCalculation,

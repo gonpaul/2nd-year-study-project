@@ -1,13 +1,13 @@
-import express from 'express';
-import MatrixController from '../controllers/matrixController.js';
+const express = require("express");
+const MatrixController = require("../controllers/matrixController.js");
 
 const router = express.Router();
 
-router.get('/:matrixId', (req, res) => {
+router.get('/:matrixId', async (req, res) => {
   const { matrixId } = req.params;
   
   // return an object if true, false otherwise
-  const result = MatrixController.getMatrixContentById(matrixId);
+  const result = await MatrixController.getMatrixContentById(matrixId);
   
   // console.log(result);
   if (result) {
@@ -17,5 +17,4 @@ router.get('/:matrixId', (req, res) => {
   }
 })
 
-
-export default router;
+module.exports = router;

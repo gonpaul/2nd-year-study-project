@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrix Calculator</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
     <main>
-        <h1>Matrix Calculator</h1>
-        
+        <div class="header-container">
+            <h1>Matrix Calculator</h1>
+            <div class="user-controls">
+                <button id="logout-btn" class="clear-button">Logout</button>
+            </div>
+        </div>
         <div class="matrix-container">
             <div class="matrix-side">
                 <h2>matrix A</h2>
@@ -30,27 +36,27 @@
                         <input type="number" class="matrix-cell">
                     </div>
                 </div>
-                
+
                 <button id="clear-a" class="clear-button">clear</button>
-                
+
                 <div class="matrix-operations">
                     <button id="transpose-a" class="operation-button">transpose</button>
                     <button id="multiply-a" class="operation-button">multiply by</button>
                     <input type="number" id="scalar-a" class="scalar-input" value="2">
                 </div>
-                
+
                 <div class="matrix-operations">
                     <button id="determinant-a" class="operation-button">determinant</button>
                     <button id="power-a" class="operation-button">raise to the power</button>
                     <input type="number" id="power-value-a" class="scalar-input" value="2">
                 </div>
-                
+
                 <div class="matrix-operations">
                     <button id="rank-a" class="operation-button">rank</button>
                     <button id="inverse-a" class="operation-button">inverse matrix</button>
                 </div>
             </div>
-            
+
             <div class="operations-center">
                 <button id="swap-matrices" class="center-button">
                     <span>←</span>
@@ -59,8 +65,15 @@
                 <button id="add-matrices" class="center-button">A + B</button>
                 <button id="subtract-matrices" class="center-button">A - B</button>
                 <button id="multiply-matrices" class="center-button">A * B</button>
+                <select name="size" id="resize-matrices" class="center-button">
+                    <option value="">--select size--</option>
+                    <option value="2x2">2x2</option>
+                    <option value="3x3">3x3</option>
+                    <option value="4x4">4x4</option>
+                    <option value="5x5">5x5</option>
+                </select>
             </div>
-            
+
             <div class="matrix-side">
                 <h2>matrix B</h2>
                 <div id="matrix-b" class="matrix-input">
@@ -80,35 +93,37 @@
                         <input type="number" class="matrix-cell">
                     </div>
                 </div>
-                
+
                 <button id="clear-b" class="clear-button">clear</button>
-                
+
                 <div class="matrix-operations">
                     <button id="transpose-b" class="operation-button">transpose</button>
                     <button id="multiply-b" class="operation-button">multiply by</button>
                     <input type="number" id="scalar-b" class="scalar-input" value="2">
                 </div>
-                
+
                 <div class="matrix-operations">
                     <button id="determinant-b" class="operation-button">determinant</button>
                     <button id="power-b" class="operation-button">raise to the power</button>
                     <input type="number" id="power-value-b" class="scalar-input" value="2">
                 </div>
-                
+
                 <div class="matrix-operations">
                     <button id="rank-b" class="operation-button">rank</button>
                     <button id="inverse-b" class="operation-button">inverse matrix</button>
                 </div>
             </div>
         </div>
-        
+
         <div class="history-section">
-            <h2>History</h2>
+            <div class="history-header">
+                <h2>History</h2>
+                <button id="clear-history" class="clear-button">Clear History</button>
+            </div>
             <div id="history-container"></div>
         </div>
     </main>
-    
-    <!-- MVC JavaScript Files -->
-    <script src="./js/app.js"></script>
+    <script src="../renderer.js"></script>
 </body>
-</html> 
+
+</html>

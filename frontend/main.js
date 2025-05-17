@@ -1,14 +1,21 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron');
+function createWindow() {
+    const win = new BrowserWindow({
+        width: 1200,
+        height: 800,
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true,
+            contextIsolation: false
+        }
+    });
 
-const createWindow = () => {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600
-  })
-
-  win.loadFile('index.html')
+    win.loadFile('./renders/login.html');
+    // win.loadFile('./renders/index.html');
 }
 
-app.whenReady().then(() => {
-  createWindow()
-})
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+});

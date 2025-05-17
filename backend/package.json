@@ -7,7 +7,8 @@
     "start:prod": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js",
     "test": "NODE_ENV=test jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "backup": "pg_dump -U postgres -h localhost -F c -b -v -f ./backup/backup.backup matrix_calculator"
   },
   "keywords": [],
   "author": "",

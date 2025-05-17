@@ -6,11 +6,25 @@ module.exports = {
   development: {
     client: 'better-sqlite3',
     connection: {
-      filename: process.env.DB_SQLITE_FILENAME || './dev.sqlite3'
+      filename: process.env.DB_SQLITE_FILENAME || './dev.sqlite'
     },
     useNullAsDefault: true,
     migrations: {
       directory: './migrations'
+    }
+  },
+
+  test: {
+    client: 'better-sqlite3',
+    connection: {
+      filename: './test.sqlite'
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
     }
   },
 

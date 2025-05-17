@@ -1,4 +1,10 @@
-const db = require("../config/database.js");
+// const db = require("../config/database.js");
+
+let db;
+
+(async () => {
+  db = await require("../config/database.js");
+})();
 
 const CalcHistoryModel = {
     /**
@@ -30,6 +36,7 @@ const CalcHistoryModel = {
                 scalar_value
             });
             const historyId = (await db('calculationHistory')).at('-1').id;
+            // const historyId = (await db('calculationHistory')).at('-1');
             console.log('Result: ', historyId);
             return historyId;
         } catch (error) {

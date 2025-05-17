@@ -1,40 +1,72 @@
-const MatricesModel = require('../models/matricesModel.js'); // ваш модуль
-const db = require('../config/database.js'); // подключение к базе данных
+const MatricesModel = require('../models/matricesModel.js');
+const UserModel = require('../models/userModel.js');
 
 describe('createMatrix', () => {
-  const testUserId = 1;
+  let testUserId;
   const rows = 2;
   const columns = 3;
   const testMatrix = [
     [1, 2, 3],
     [4, 5, 6]
   ];
+  let db;
 
   beforeAll(async () => {
+    // Get the database connection - this awaits initialization
+    db = await require('../config/database.js');
+    
+    // Set up test user
+    try {
+      const existingUser = await UserModel.getUserByEmail('testMatrix@example.com');
+      
+      if (!existingUser) {
+        testUserId = await UserModel.register(
+          'testuser',
+          'testMatrix@example.com',
+          'password123'
+        );
+      } else {
+        testUserId = existingUser.id;
+      }
+      
+      if (!testUserId) {
+        throw new Error('Failed to get or create test user');
+      }
+    } catch (error) {
+      throw error;
+    }
+    
     // Очистка таблиц перед запуском тестов
-    await db.prepare('DELETE FROM matrixElements').run();
-    await db.prepare('DELETE FROM matrices').run();
-    // Можно вставить тестового пользователя, если его еще нет
-    // или убедиться, что пользователь с testUserId есть
+    await db.raw('DELETE FROM matrixElements');
+    await db.raw('DELETE FROM matrices');
+  });
+  
+  afterAll(async () => {
+    // Close database connection
+    if (db) {
+      await db.destroy();
+    }
+    // Add a small delay to ensure connections are closed
+    await new Promise(resolve => setTimeout(resolve, 500));
   });
 
-  test('создает матрицу и возвращает ее id', () => {
-    const matrixId = MatricesModel.createMatrix({ user_id: testUserId, matrix: testMatrix, rows, columns });
+  test('создает матрицу и возвращает ее id', async () => {
+    const matrixId = await MatricesModel.createMatrix( testUserId, testMatrix, rows, columns );
     expect(typeof matrixId).toBe('number');
 
     // Проверка, что запись есть в таблице matrices
-    const row = db.prepare('SELECT * FROM matrices WHERE matrix_id = ?').get(matrixId);
+    const row = await db('matrices').where('id', matrixId).first();
     expect(row).toBeDefined();
     expect(row.user_id).toBe(testUserId);
     expect(row.rows).toBe(rows);
     expect(row.columns).toBe(columns);
   });
 
-  test('заполняет таблицу matrixElements правильными значениями', () => {
+  test('заполняет таблицу matrixElements правильными значениями', async () => {
     // Создаем матрицу
-    MatricesModel.createMatrix({ user_id: testUserId, matrix: testMatrix, rows, columns });
+    const matrixId = await MatricesModel.createMatrix( testUserId, testMatrix, rows, columns );
     // Проверяем, что элементы добавлены
-    const elements = db.prepare('SELECT * FROM matrixElements WHERE matrix_id = (SELECT MAX(matrix_id) FROM matrices)').all();
+    const elements = await db('matrixElements').where('matrix_id', matrixId).select('*');
     expect(elements.length).toBe(rows * columns);
 
     // Проверяем, что все элементы соответствуют матрице

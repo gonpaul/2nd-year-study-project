@@ -1,4 +1,10 @@
-const db = require("../config/database.js");
+// const db = await require("../config/database.js");
+
+let db;
+
+(async () => {
+  db = await require("../config/database.js");
+})();
 
 const UserModel = {
   /**

@@ -7,10 +7,8 @@ const MatricesModel = require('../models/matricesModel.js');
 const operations = {
     transpose: { name: 'Transpose', description: 'Transpose the matrix' },
     calculateRank: { name: 'Calculate Rank', description: 'Find the rank of the matrix' },
-
     multiply: { name: 'Multiply', description: 'Multiply two matrices' }
 }
-
 
 describe('CalcHistoryModel Tests', () => {
     // Test data variables
@@ -27,33 +25,55 @@ describe('CalcHistoryModel Tests', () => {
     let matrixBId;
     let resultMatrixId;
     let historyId;
+    let db;
 
     // unary
-    const transposeOperation = OperationModel.getOperationByName(operations.transpose.name);
-    const calculateRank = OperationModel.getOperationByName(operations.calculateRank.name);
-    const transposeOperationId = transposeOperation.operation_id;
-    const calculateRankOperationId = calculateRank.operation_id;
+    let transposeOperation;
+    let calculateRank;
+    let transposeOperationId;
+    let calculateRankOperationId;
 
     // binary
-    const multiplyOperation = OperationModel.getOperationByName(operations.multiply.name);
-    const multiplyOperationId = multiplyOperation.operation_id;
+    let multiplyOperation;
+    let multiplyOperationId;
 
   beforeAll(async () => {
+    // Get the database connection - this awaits initialization
+    db = await require('../config/database.js');
+
+    await db.migrate.latest();
+    
+    // Now that db is initialized, get operations
+    transposeOperation = await OperationModel.getOperationByName(operations.transpose.name);
+    calculateRank = await OperationModel.getOperationByName(operations.calculateRank.name);
+    transposeOperationId = transposeOperation.id;
+    calculateRankOperationId = calculateRank.id;
+
+    // binary
+    multiplyOperation = await OperationModel.getOperationByName(operations.multiply.name);
+    multiplyOperationId = multiplyOperation.id;
+
     // Set up test data
     // Add a test user if it doesn't exist yet
-    const existingUser = UserModel.getUserByEmail('test@example.com');
-    
-    if (!existingUser) {
-      userId = UserModel.register({
-        username: 'testuser',
-        email: 'test@example.com',
-        password_hash: 'password123' // UserModel should handle hashing
-      });
-    } else {
-      userId = existingUser.user_id;
+    try {
+      const existingUser = await UserModel.getUserByEmail('testHistory@example.com');
+      
+      if (!existingUser) {
+        userId = await UserModel.register(
+          'testuser',
+          'testHistory@example.com',
+          'password123'
+        );
+      } else {
+        userId = existingUser.id;
+      }
+      
+      if (!userId) {
+        throw new Error('Failed to get or create test user');
+      }
+    } catch (error) {
+      throw error;
     }
-    
-
     
     // Create test matrices
     matrixA = [
@@ -73,63 +93,48 @@ describe('CalcHistoryModel Tests', () => {
       [10, 12]
     ];
     
-    matrixAId = MatricesModel.createMatrix({
-      user_id: userId,
-      matrix: matrixA,
-      rows: 2,
-      columns: 2
-    });
+    matrixAId = await MatricesModel.createMatrix( userId, matrixA, 2, 2 );
     
-    matrixBId = MatricesModel.createMatrix({
-      user_id: userId,
-      matrix: matrixB,
-      rows: 2,
-      columns: 2
-    });
+    matrixBId = await MatricesModel.createMatrix( userId, matrixB, 2, 2 );
     
-    resultMatrixId = MatricesModel.createMatrix({
-      user_id: userId,
-      matrix: resultMatrix,
-      rows: 2,
-      columns: 2
-    });
+    resultMatrixId = await MatricesModel.createMatrix( userId, resultMatrix, 2, 2 );
   });
   
-  afterAll(() => {
+  afterAll(async () => {
     // Clean up test data
     if (historyId) {
-      CalcHistoryModel.deleteHistory(historyId);
+      await CalcHistoryModel.deleteHistory(historyId);
     }
     
     // Clear all calculation history for our test user
-    CalcHistoryModel.clearUserHistory(userId);
+    await CalcHistoryModel.clearUserHistory(userId);
+    
+    // Close database connection
+    if (db) {
+      await db.destroy();
+    }
+    // Add a small delay to ensure connections are closed
+    await new Promise(resolve => setTimeout(resolve, 500));
   });
   
   // Example test for adding calculation to history
   describe('binary calculations', () => {
-    test('should multiply matrices', () => {
+    test('should multiply matrices', async () => {
       // Add a binary calculation
-      console.log("Calling addCalculation method with the following parameters:\n");
-      console.log("user_id:", userId);
-      console.log("operation_id", multiplyOperationId);
-      console.log("result_matrix_id", resultMatrixId);
-      console.log("matrix_a", matrixA);
-      console.log("matrix_b", matrixB);
-
-      historyId = CalcHistoryModel.addCalculation({
-        user_id: userId,
-        operation_id: multiplyOperationId,
-        result_matrix_id: resultMatrixId,
-        matrix_a_id: matrixAId,
-        matrix_b_id: matrixBId
-      });
+      historyId = await CalcHistoryModel.addCalculation(
+        userId,
+        multiplyOperationId,
+        resultMatrixId,
+        matrixAId,
+        matrixBId
+      );
       
       // Check ID was returned
       expect(historyId).toBeDefined();
       expect(typeof historyId).toBe('number');
       
       // Verify record exists
-      const record = CalcHistoryModel.getHistoryById(historyId);
+      const record = await CalcHistoryModel.getHistoryById(historyId);
       expect(record).toBeDefined();
       expect(record.user_id).toBe(userId);
       expect(record.operation_id).toBe(multiplyOperationId);
@@ -138,29 +143,20 @@ describe('CalcHistoryModel Tests', () => {
   
   // Add more test cases here...
   describe('unary calculations', () => {
-    test('should add unary transpose operation entry', () => {
-      console.log("Calling unary addCalculation method with the following parameters:\n");
-      console.log("user_id:", userId);
-      console.log("operation_id", transposeOperationId);
-      console.log("result_matrix_id", resultMatrixId);
-      console.log("matrix_a", matrixA);
-      console.log("scalar_value", null);
-
-      historyId = CalcHistoryModel.addCalculation({
-        user_id: userId,
-        operation_id: transposeOperationId,
-        matrix_a_id: matrixAId,
-        // scalar_value can is null
-        scalar_value: null,
-        result_matrix_id: resultMatrixId
-      });
+    test('should add unary transpose operation entry', async () => {
+      historyId = await CalcHistoryModel.addCalculation(
+        userId,
+        transposeOperationId,
+        resultMatrixId,
+        matrixAId,
+      );
       
       // Check ID was returned
       expect(historyId).toBeDefined();
       expect(typeof historyId).toBe('number');
       
       // Verify record exists
-      const record = CalcHistoryModel.getHistoryById(historyId);
+      const record = await CalcHistoryModel.getHistoryById(historyId);
       expect(record).toBeDefined();
       expect(record.user_id).toBe(userId);
       expect(record.operation_id).toBe(transposeOperationId);
